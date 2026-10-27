@@ -114,3 +114,13 @@ test("quem passa do play-in pelo palpite entra no lugar do time real na fase seg
   assert.deepEqual(m1({ p1: "t2" }).teams.map((t) => t.id), ["t2", "t3"]);
   assert.equal(m1({ p1: "t2" }).winner, null);
 });
+
+test("tabela mudada por palpite troca quem entra no chaveamento seguinte, por posição", () => {
+  const [a, b, c] = [team(1), team(2), team(3)];
+  const groups = { slug: "groups", kind: "rr", sections: [{ rankings: [{ teams: [a] }, { teams: [b] }], matches: [played("g1", a, b)] }] };
+  const final = { slug: "final", kind: "bracket", sections: [{ matches: [played("f1", a, c)], links: [[null, null]] }] };
+
+  const f1 = (picks) => E.compute([groups, final], picks)[1].sections[0].matches[0];
+  assert.deepEqual(f1({ g1: "t2" }).teams.map((t) => t.id), ["t2", "t3"]);
+  assert.equal(f1({ g1: "t2" }).winner, null);
+});

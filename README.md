@@ -26,7 +26,8 @@ dependências.
 
 | Fase | Como funciona |
 | --- | --- |
-| Pontos corridos | Tabela por vitórias, derrotas e saldo de jogos. Mudar resultados reordena os playoffs (CBLOL e LCS). |
+| Pontos corridos | Tabela por vitórias, derrotas e saldo de jogos. Mudar resultados muda quem entra na fase seguinte, pela posição na tabela de cada grupo. |
+| Play-in e chaves intermediárias | O time que passa pelo palpite entra no lugar do time real na fase seguinte. |
 | Fase suíça | 3 vitórias classifica, 3 derrotas elimina. Rodadas 2+ sorteiam times com a mesma campanha, sem revanche. Jogo valendo vaga/eliminação é md3, o resto md1. |
 | Quartas do Mundial | Cada 3-0 pega um 3-2, em lados opostos da chave; os demais são sorteio livre. |
 | Chaveamentos | A estrutura (quem vem de qual partida) é deduzida dos jogos reais; chaves ainda "a definir" usam a mesma fase da edição anterior como molde. |
@@ -79,8 +80,8 @@ próprio lolesports.com; se a Riot trocá-la, o site para de carregar até ela s
 
 - Desempate não considera confronto direto.
 - A 1ª rodada da suíça sempre vem do sorteio real (a API não informa os tiers dos times).
-- Mudar resultados em grupos múltiplos de pontos corridos (LCK, LPL) não muda quem entra no chaveamento
-  seguinte. Já em chaveamentos (play-in incluído), o time que passa pelo palpite entra no lugar do real.
+- O time que passa pelo palpite herda a vaga (posição na tabela ou saída da chave) do time real na fase
+  seguinte; a fase seguinte não é sorteada de novo (exceto o mata-mata depois da suíça).
 - Palpite só de vencedor, sem placar, não altera o saldo.
 
 ---

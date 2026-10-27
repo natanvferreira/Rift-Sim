@@ -51,7 +51,7 @@ function resolve(id, a, b, real, picks, bo = 1) {
   const m = { id, bo, teams: [a, b], winner: null, score: null, picked: false };
   if (isTBD(a) || isTBD(b)) return m;
   const rt = real && [a, b].map((t) => real.teams.find((x) => x.id === t.id));
-  if (rt?.every(Boolean) && real.state === "completed") {
+  if (rt?.every((t) => t?.result) && real.state === "completed") {
     const w = rt.findIndex((t) => t.result?.outcome === "win");
     if (w >= 0) {
       m.winner = m.teams[w];
@@ -275,17 +275,7 @@ function bracketSeeds(sec, prev, picks) {
     const rand = seededRandom(picks["draw:ko"] ?? 1);
     return { teams: drawKnockout(prev.qualifiers, reals.length, rand), drawn: true };
   }
-  if (prev?.dirty && prev.st.kind === "rr" && prev.sections.length === 1) {
-    const { official, table } = prev.sections[0];
-    return {
-      teams: reals.map((t) => {
-        const rank = isTBD(t) ? -1 : official.indexOf(t.id);
-        if (rank < 0) return real(t);
-        return prev.complete ? table[rank].team : null;
-      }),
-    };
-  }
-  // shortcut: vindo de grupos múltiplos/outro chaveamento, mantém o time real (não recalcula a vaga)
+  // vindo de pontos corridos ou de outro chaveamento, os times já chegam trocados (trackSwaps)
   return { teams: reals.map(real) };
 }
 
@@ -311,17 +301,23 @@ function computeBracket(st, picks, prev) {
 
 // ---------- torneio inteiro ----------
 
-// chaveamento com palpites: quem sai de cada vaga final (não ligada a outra partida) troca de time;
-// o time real que saiu dali é substituído nas fases seguintes pelo simulado (ou "a definir")
+// fase com palpites: o time real de cada vaga (posição na tabela, ou saída de um chaveamento que não
+// leva a outra partida) é substituído nas fases seguintes pelo simulado (ou "a definir")
 function trackSwaps(real, sim, swap) {
+  const set = (r, t) => r && r.id !== t?.id && swap.set(r.id, t || { id: `tbd-${r.id}`, tbd: true });
+  if (sim.st.kind === "rr") {
+    real.sections.forEach((sec, s) =>
+      sec.table.forEach((row, k) => set(row.team, sim.complete && sim.sections[s].table[k].team)),
+    );
+    return;
+  }
   real.sections.forEach((sec, s) =>
     sec.matches.forEach((m, i) =>
       [true, false].forEach((won) => {
         if (sec.links.some((l) => l.some((src) => src?.from === i && src.won === won))) return;
         const r = won ? m.winner : loserOf(m);
         const x = sim.sections[s].matches[i];
-        const t = won ? x.winner : loserOf(x);
-        if (r && r.id !== t?.id) swap.set(r.id, t || { id: `tbd-${r.id}`, tbd: true });
+        set(r, won ? x.winner : loserOf(x));
       }),
     ),
   );
@@ -351,7 +347,8 @@ function compute(stages, picks) {
         : st.kind === "swiss"
           ? computeSwiss(st, picks)
           : computeBracket(st, picks, prev);
-    if (real && st.kind === "bracket" && out.dirty) trackSwaps(real[i], out, swap);
+    // suíça -> mata-mata já é resorteado em bracketSeeds
+    if (real && st.kind !== "swiss" && out.dirty) trackSwaps(real[i], { st, ...out }, swap);
     return (prev = { st, ...out });
   });
 }
