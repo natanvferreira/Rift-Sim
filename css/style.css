@@ -502,12 +502,20 @@ footer {
 }
 
 @media (max-width: 720px) {
-  .rr {
-    grid-template-columns: minmax(0, 1fr);
+  /* topo não gruda: no celular ele comeria um terço da tela */
+  .top {
+    position: static;
+    gap: 10px;
   }
 
-  .stage {
-    padding: 12px;
+  .tabs {
+    width: 100%;
+  }
+
+  .tabs button {
+    flex: 1;
+    padding: 6px 4px;
+    font-size: 14px;
   }
 
   .controls {
@@ -517,5 +525,49 @@ footer {
 
   .controls select {
     flex: 1;
+    min-width: 0;
+  }
+
+  .legend {
+    gap: 6px 14px;
+    font-size: 12px;
+  }
+
+  .stage {
+    padding: 12px;
+    margin-top: 14px;
+  }
+
+  .rr {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* colunas mais estreitas: cabem duas rodadas lado a lado */
+  .bracket,
+  .cols {
+    gap: 14px;
+  }
+
+  .col,
+  .swiss-round,
+  .col.final {
+    flex-basis: 150px;
+  }
+
+  .team {
+    padding: 7px 8px;
+    gap: 6px;
+  }
+
+  /* grande final embaixo das chaves em vez de fora da tela à direita */
+  .double {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .double .col.final {
+    align-self: center;
+    flex-basis: auto;
+    width: 200px;
   }
 }

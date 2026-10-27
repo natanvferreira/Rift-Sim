@@ -103,6 +103,8 @@ function finalHTML(m, title, isChampionStage) {
   return col(title, matchHTML(m) + champ, "final");
 }
 
+const narrow = matchMedia("(max-width: 720px)"); // mesmo ponto de quebra do CSS
+
 // eliminação simples: os dois lados afunilam até a final no centro
 const TREE_NAMES = ["Semifinal", "Quartas de final", "Oitavas de final"];
 
@@ -112,10 +114,15 @@ function treeHTML(sec, isChampionStage) {
     sec.links[i].forEach((s) => s && levels(s.from, lvl + 1, out));
     return out;
   };
-  const side = (src) =>
-    levels(src.from).map((ms, lvl) => col(TREE_NAMES[lvl] ?? "Rodada", matchesHTML(ms)));
-  const [left, right] = sec.links.at(-1);
-  return `<div class="bracket tree">${side(left).reverse().join("")}${finalHTML(sec.matches.at(-1), "Final", isChampionStage)}${side(right).join("")}</div>`;
+  const [left, right] = sec.links.at(-1).map((src) => levels(src.from));
+  const final = finalHTML(sec.matches.at(-1), "Final", isChampionStage);
+  const column = (ms, lvl) => col(TREE_NAMES[lvl] ?? "Rodada", matchesHTML(ms));
+  // celular: sem espelhar, os dois lados juntos em cada rodada, terminando na final
+  if (narrow.matches) {
+    const merged = left.map((ms, lvl) => [...ms, ...(right[lvl] || [])]);
+    return `<div class="bracket">${merged.map(column).reverse().join("")}${final}</div>`;
+  }
+  return `<div class="bracket tree">${left.map(column).reverse().join("")}${final}${right.map(column).join("")}</div>`;
 }
 
 // eliminação dupla: chave superior e inferior convergem para a grande final
@@ -270,6 +277,15 @@ function savePicks() {
   store.set(`picks:${state.tour.id}`, state.picks);
   render();
 }
+
+// girar o celular / redimensionar troca o layout espelhado do mata-mata
+narrow.addEventListener("change", () => state.stages && render());
+
+// editar o #liga na URL ou usar o voltar do navegador troca a liga
+addEventListener("hashchange", () => {
+  const league = decodeURIComponent(location.hash.slice(1));
+  if (LEAGUES[league] && league !== state.league) selectLeague(league);
+});
 
 $("#tabs").addEventListener("click", (e) => {
   const b = e.target.closest("[data-league]");
