@@ -251,6 +251,24 @@ select:focus-visible {
   border-color: var(--gold);
 }
 
+/* caminho do time sob o mouse: as partidas dele acendem, o resto apaga */
+.match {
+  transition: opacity 0.15s;
+}
+
+.tracing .match:not(.trail) {
+  opacity: 0.35;
+}
+
+.match.trail {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold-soft);
+}
+
+.team.trail .code {
+  color: var(--gold);
+}
+
 .scores {
   display: flex;
   align-items: center;

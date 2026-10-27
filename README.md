@@ -19,6 +19,7 @@ dependências.
   Use 🎲 **Sortear de novo** para outro sorteio.
 - **Mata-mata do Mundial:** quando as quartas ainda não existem (ou você mudou a suíça), o chaveamento é sorteado
   pela regra oficial; 🎲 **Sortear chaveamento** refaz.
+- **Caminho do time:** passe o mouse num time para destacar todas as partidas dele, em todas as fases.
 - **Limpar palpites:** volta tudo ao resultado real. Os palpites ficam salvos no navegador, por torneio.
 - **Link direto:** `index.html#CBLOL`, `#LCK`, `#LPL`, `#LCS`, `#MSI`, `#Mundial`.
 

@@ -242,6 +242,7 @@ function render() {
     ? compute(state.stages, state.picks).map(stageHTML).join("")
     : '<p class="muted">Sem dados para este torneio ainda.</p>';
   document.querySelectorAll(".bracket").forEach((el, i) => (el.scrollLeft = scrolls[i] ?? 0));
+  showTrail($("#view").querySelector(".team[data-t]:hover")?.dataset.t);
   // rodada nova da suíça nasce na última coluna, possivelmente fora da tela: leva a faixa até o fim
   const rounds = document.querySelectorAll(".swiss-round");
   if (roundsBefore && rounds.length > roundsBefore) {
@@ -317,6 +318,23 @@ $("#view").addEventListener("click", (e) => {
   } else return;
   savePicks();
 });
+
+// mouse em cima de um time destaca todas as partidas dele (o caminho até onde chegou)
+function showTrail(id) {
+  const view = $("#view");
+  view.classList.toggle("tracing", Boolean(id));
+  for (const el of view.querySelectorAll(".trail")) el.classList.remove("trail");
+  if (!id) return;
+  for (const el of view.querySelectorAll(`.team[data-t="${CSS.escape(id)}"]`)) {
+    el.classList.add("trail");
+    el.closest(".match").classList.add("trail");
+  }
+}
+
+$("#view").addEventListener("mouseover", (e) =>
+  showTrail(e.target.closest(".team[data-t]")?.dataset.t),
+);
+$("#view").addEventListener("mouseleave", () => showTrail(null));
 
 (async function init() {
   try {

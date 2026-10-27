@@ -7,6 +7,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 ### Adicionado
 
 - Logo do Rift Sim no topo da página, como favicon e no README.
+- Passar o mouse num time destaca todas as partidas dele (o caminho até onde chegou) e apaga as demais.
 
 ### Alterado
 
