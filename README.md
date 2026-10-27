@@ -79,7 +79,8 @@ próprio lolesports.com; se a Riot trocá-la, o site para de carregar até ela s
 
 - Desempate não considera confronto direto.
 - A 1ª rodada da suíça sempre vem do sorteio real (a API não informa os tiers dos times).
-- Mudar resultados em grupos múltiplos (LCK, LPL) ou no play-in não muda quem entra no chaveamento seguinte.
+- Mudar resultados em grupos múltiplos de pontos corridos (LCK, LPL) não muda quem entra no chaveamento
+  seguinte. Já em chaveamentos (play-in incluído), o time que passa pelo palpite entra no lugar do real.
 - Palpite só de vencedor, sem placar, não altera o saldo.
 
 ---

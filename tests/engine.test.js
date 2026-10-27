@@ -102,3 +102,15 @@ test("sorteio das quartas: os dois 3-0 pegam 3-2 e ficam em lados opostos", () =
     assert.equal(losses(slots[5]), 2);
   }
 });
+
+test("quem passa do play-in pelo palpite entra no lugar do time real na fase seguinte", () => {
+  const [a, b, c] = [team(1), team(2), team(3)];
+  const playIn = { slug: "play_ins", kind: "bracket", sections: [{ matches: [played("p1", a, b)], links: [[null, null]] }] };
+  const main = { slug: "main", kind: "bracket", sections: [{ matches: [played("m1", a, c)], links: [[null, null]] }] };
+
+  const m1 = (picks) => E.compute([playIn, main], picks)[1].sections[0].matches[0];
+  assert.equal(m1({}).winner.id, "t1");
+  // b passa no lugar de a, sem herdar a vitória real de a
+  assert.deepEqual(m1({ p1: "t2" }).teams.map((t) => t.id), ["t2", "t3"]);
+  assert.equal(m1({ p1: "t2" }).winner, null);
+});

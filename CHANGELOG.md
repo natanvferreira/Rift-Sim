@@ -16,6 +16,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ### Corrigido
 
+- Palpite no play-in (ou em qualquer chaveamento) agora leva o time escolhido para a fase seguinte, no lugar
+  do time real e sem herdar os resultados dele; enquanto a vaga não é decidida, aparece "A definir".
 - Trocar o `#liga` na URL ou usar o voltar do navegador agora troca a liga sem recarregar a página.
 
 ## [1.0.0] - 2026-10-27

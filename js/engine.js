@@ -1,7 +1,7 @@
 // Motor do simulador: junta resultados reais + palpites e calcula cada fase.
 // Só funções puras (sem DOM), testadas em tests/engine.test.js.
 
-const isTBD = (t) => !t || t.id === "0";
+const isTBD = (t) => !t || t.id === "0" || t.tbd;
 const hasTBD = (m) => m.teams.some(isTBD);
 const loserOf = (m) => m.winner && m.teams.find((t) => t.id !== m.winner.id);
 const pairKey = (a, b) => [a.id, b.id].sort().join("-");
@@ -177,13 +177,14 @@ function pairSwiss(alive, met, rand) {
 function computeSwiss(st, picks) {
   const real = st.sections[0].matches;
   const teams = [];
+  // vaga ainda indefinida (fase anterior simulada) conta como time, para o tamanho das rodadas
   for (const t of real.flatMap((m) => m.teams))
-    if (!isTBD(t) && !teams.some((x) => x.id === t.id)) teams.push(t);
+    if (t && t.id !== "0" && !teams.some((x) => x.id === t.id)) teams.push(t);
   const sizes = swissSizes(teams.length);
 
   // sorteio da 1ª rodada ainda não saiu: mostra os jogos como estão
   if (!sizes.length || real.slice(0, sizes[0]).some(hasTBD)) {
-    const matches = real.map((r) => resolve(r.id, ...r.teams, r, picks, r.bo));
+    const matches = real.slice(0, sizes[0] || real.length).map((r) => resolve(r.id, ...r.teams, r, picks, r.bo));
     return { rounds: [{ matches }], table: [], qualifiers: [], dirty: false, complete: false };
   }
 
@@ -310,15 +311,47 @@ function computeBracket(st, picks, prev) {
 
 // ---------- torneio inteiro ----------
 
+// chaveamento com palpites: quem sai de cada vaga final (não ligada a outra partida) troca de time;
+// o time real que saiu dali é substituído nas fases seguintes pelo simulado (ou "a definir")
+function trackSwaps(real, sim, swap) {
+  real.sections.forEach((sec, s) =>
+    sec.matches.forEach((m, i) =>
+      [true, false].forEach((won) => {
+        if (sec.links.some((l) => l.some((src) => src?.from === i && src.won === won))) return;
+        const r = won ? m.winner : loserOf(m);
+        const x = sim.sections[s].matches[i];
+        const t = won ? x.winner : loserOf(x);
+        if (r && r.id !== t?.id) swap.set(r.id, t || { id: `tbd-${r.id}`, tbd: true });
+      }),
+    ),
+  );
+}
+
+const swapTeams = (st, swap) => ({
+  ...st,
+  sections: st.sections.map((sec) => ({
+    ...sec,
+    matches: sec.matches.map((m) => ({
+      ...m,
+      // sem `result`: o resultado real era do time que saiu, não do que entrou
+      teams: m.teams.map((t) => (t && swap.has(t.id) ? { ...swap.get(t.id), result: null } : t)),
+    })),
+  })),
+});
+
 function compute(stages, picks) {
+  const real = Object.keys(picks).length ? compute(stages, {}) : null;
+  const swap = new Map();
   let prev = null;
-  return stages.map((st) => {
+  return stages.map((orig, i) => {
+    const st = swap.size ? swapTeams(orig, swap) : orig;
     const out =
       st.kind === "rr"
         ? computeRR(st, picks)
         : st.kind === "swiss"
           ? computeSwiss(st, picks)
           : computeBracket(st, picks, prev);
+    if (real && st.kind === "bracket" && out.dirty) trackSwaps(real[i], out, swap);
     return (prev = { st, ...out });
   });
 }
