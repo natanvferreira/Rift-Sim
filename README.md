@@ -1,3 +1,5 @@
+<p align="center"><img src="img/logo.png" alt="Rift Sim" width="160" /></p>
+
 # Rift Sim
 
 Simulador de campeonatos de League of Legends com **dados reais**: CBLOL, LCK, LPL, LCS, MSI e Mundial.
@@ -48,6 +50,7 @@ O site fica em `https://<seu-usuario>.github.io/rift-sim/`.
 ```
 index.html          página
 css/style.css       visual
+img/                logo (original e versão 192px usada no site e no favicon)
 js/engine.js        lógica pura: resultados reais + palpites -> tabelas, suíça, chaveamentos
 js/api.js           acesso à API do lolesports
 js/ui.js            estado, renderização e eventos

@@ -2,6 +2,12 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [Unreleased]
+
+### Adicionado
+
+- Logo do Rift Sim no topo da página, como favicon e no README.
+
 ## [1.0.0] - 2026-10-27
 
 Primeira versão publicada.
