@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rift Sim</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main>
+      <header class="top">
+        <h1 class="brand">Rift Sim</h1>
+        <nav id="tabs" class="tabs" aria-label="Competição"></nav>
+        <div class="controls">
+          <select id="tour" aria-label="Torneio"></select>
+          <button id="reset">Limpar palpites</button>
+        </div>
+      </header>
+      <p class="legend">
+        <span>Clique no time para escolher o vencedor (de novo para desfazer). Em md3/md5, escolha o placar logo abaixo — ele conta no saldo da tabela.</span>
+        <span><i class="real"></i>Resultado real</span>
+        <span><i class="pick"></i>Seu palpite</span>
+      </p>
+      <div id="view"></div>
+      <footer class="muted">
+        Dados ao vivo da API do lolesports.com. Projeto de fã, sem ligação com a Riot Games.
+      </footer>
+    </main>
+    <script src="js/engine.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+  </body>
+</html>
