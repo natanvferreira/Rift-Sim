@@ -8,6 +8,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 - Logo do Rift Sim no topo da página, como favicon e no README.
 
+### Alterado
+
+- Layout no celular: topo compacto e não fixo, abas ocupando a largura, colunas mais estreitas (duas rodadas
+  lado a lado), grande final abaixo das chaves e mata-mata em sequência (quartas → semi → final) em vez de
+  espelhado.
+
+### Corrigido
+
+- Trocar o `#liga` na URL ou usar o voltar do navegador agora troca a liga sem recarregar a página.
+
 ## [1.0.0] - 2026-10-27
 
 Primeira versão publicada.
