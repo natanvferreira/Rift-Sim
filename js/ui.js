@@ -4,9 +4,9 @@ const $ = (s) => document.querySelector(s);
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const img = (t) => esc((t.image || "").replace(/^http:/, "https:"));
-// "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"
+// "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"; "circuito_desafiante_split_2_2026" -> "Desafiante Split 2 2026"
 const tourName = (t) =>
-  `${tr(state.league)} ${t.slug.split("_").slice(1).join(" ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  `${tr(state.league)} ${t.slug.replace(/^(circuito_desafiante|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
 const store = {
   get: (k) => {

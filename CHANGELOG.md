@@ -11,6 +11,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 - Seletor de idioma (PT / EN): começa pelo idioma do navegador e fica salvo; os nomes das fases vêm da API no
   idioma escolhido.
 - Botão "Compartilhar no X": abre um post com um link que carrega os seus palpites para quem abrir.
+- Circuito Desafiante (aba "Desafiante", link `#Desafiante`).
 
 ### Alterado
 
