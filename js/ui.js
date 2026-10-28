@@ -255,20 +255,21 @@ function render() {
 
 async function selectLeague(league) {
   state.league = league;
-  history.replaceState(null, "", `#${league}`); // link direto para a liga
+  history.replaceState(null, "", `${location.pathname}#${league}`); // link direto para a liga (e tira o ?tour=&picks= de um link compartilhado)
   const today = new Date().toISOString().slice(0, 10);
   const list = state.tours[league];
   await selectTour(list.find((t) => t.startDate <= today) || list[0]);
 }
 
-async function selectTour(tour) {
+async function selectTour(tour, shared) {
   Object.assign(state, { tour, stages: null, lastPos: new Map() });
   render();
   try {
     const stages = await loadStages(tour, state.tours[state.league], LEAGUES[state.league]);
     if (state.tour !== tour) return; // trocou de torneio enquanto carregava
-    Object.assign(state, { stages, picks: store.get(`picks:${tour.id}`) || {} });
-    render();
+    Object.assign(state, { stages, picks: shared || store.get(`picks:${tour.id}`) || {} });
+    if (shared) savePicks();
+    else render();
   } catch (e) {
     $("#view").innerHTML = `<p class="err">Erro ao carregar ${esc(tour.slug)}: ${esc(e.message)}</p>`;
   }
@@ -301,6 +302,29 @@ $("#reset").addEventListener("click", () => {
   state.picks = {};
   savePicks();
 });
+
+// os palpites vão no próprio link: quem abrir vê a mesma simulação
+$("#share").addEventListener("click", () => {
+  if (!state.tour) return;
+  const url = new URL(location.pathname, location.href);
+  url.search = new URLSearchParams({ tour: state.tour.id, picks: JSON.stringify(state.picks) });
+  url.hash = state.league;
+  const text = `Minha simulação do ${tourName(state.tour)} no Rift Sim`;
+  const q = new URLSearchParams({ text, url });
+  open(`https://twitter.com/intent/tweet?${q}`, "_blank", "noopener");
+});
+
+// palpites vindos de um link: só aceita { idDaPartida: "idDoTime [placar]" | número do sorteio }
+function parseShared(raw) {
+  try {
+    const p = JSON.parse(raw);
+    const ok = p && typeof p === "object" && !Array.isArray(p) &&
+      Object.values(p).every((v) => typeof v === "string" || Number.isFinite(v));
+    return ok ? p : null;
+  } catch {
+    return null;
+  }
+}
 
 $("#view").addEventListener("click", (e) => {
   const draw = e.target.closest("[data-draw]");
@@ -340,6 +364,20 @@ $("#view").addEventListener("mouseleave", () => showTrail(null));
   try {
     const lists = await Promise.all(Object.values(LEAGUES).map(loadTournaments));
     Object.keys(LEAGUES).forEach((k, i) => (state.tours[k] = lists[i]));
+    const params = new URLSearchParams(location.search);
+    const shared = parseShared(params.get("picks"));
+    const league = shared && Object.keys(state.tours).find((k) => state.tours[k].some((t) => t.id === params.get("tour")));
+    if (league) {
+      const tour = state.tours[league].find((t) => t.id === params.get("tour"));
+      const mine = store.get(`picks:${tour.id}`);
+      // não apaga os palpites da pessoa sem perguntar
+      const replace = !mine || !Object.keys(mine).length || JSON.stringify(mine) === JSON.stringify(shared) ||
+        confirm("Este link tem uma simulação compartilhada. Substituir seus palpites deste torneio por ela?");
+      state.league = league;
+      history.replaceState(null, "", `${location.pathname}#${league}`);
+      await selectTour(tour, replace ? shared : undefined);
+      return;
+    }
     const fromHash = decodeURIComponent(location.hash.slice(1));
     await selectLeague(LEAGUES[fromHash] ? fromHash : state.league);
   } catch (e) {
