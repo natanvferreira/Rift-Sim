@@ -546,6 +546,10 @@ footer {
     min-width: 0;
   }
 
+  .controls #lang {
+    flex: none;
+  }
+
   .legend {
     gap: 6px 14px;
     font-size: 12px;

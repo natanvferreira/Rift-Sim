@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 - Logo do Rift Sim no topo da página, como favicon e no README.
 - Passar o mouse num time destaca todas as partidas dele (o caminho até onde chegou) e apaga as demais.
+- Seletor de idioma (PT / EN): começa pelo idioma do navegador e fica salvo; os nomes das fases vêm da API no
+  idioma escolhido.
 - Botão "Compartilhar no X": abre um post com um link que carrega os seus palpites para quem abrir.
 
 ### Alterado

@@ -6,7 +6,7 @@ const esc = (s) =>
 const img = (t) => esc((t.image || "").replace(/^http:/, "https:"));
 // "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"
 const tourName = (t) =>
-  `${state.league} ${t.slug.split("_").slice(1).join(" ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  `${tr(state.league)} ${t.slug.split("_").slice(1).join(" ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
 const store = {
   get: (k) => {
@@ -38,7 +38,7 @@ const state = {
 function teamHTML(m, i, open) {
   const t = m.teams[i];
   if (isTBD(t)) {
-    return `<button class="team tbd" disabled><span class="logo"></span><span class="code">A definir</span></button>`;
+    return `<button class="team tbd" disabled><span class="logo"></span><span class="code">${tr("A definir")}</span></button>`;
   }
   const result = !m.winner ? "" : m.winner.id === t.id ? (m.picked ? "win picked" : "win") : "lose";
   return `<button class="team ${result}" ${open ? "" : "disabled"} data-m="${esc(m.id)}" data-t="${esc(t.id)}" title="${esc(t.name)}">
@@ -82,7 +82,7 @@ function tableHTML(rows, key, rowClass = () => "") {
     return p > i ? `<span class="up">▲${p - i}</span>` : `<span class="down">▼${i - p}</span>`;
   };
   return `<table class="standings">
-    <thead><tr><th>#</th><th>Time</th><th>V-D</th><th>Saldo</th></tr></thead>
+    <thead><tr><th>#</th><th>${tr("Time")}</th><th>${tr("V-D")}</th><th>${tr("Saldo")}</th></tr></thead>
     <tbody>${rows
       .map(
         (r, i) => `<tr class="${rowClass(r)}">
@@ -98,7 +98,7 @@ function tableHTML(rows, key, rowClass = () => "") {
 // troféu só na última fase com final; nas anteriores o vencedor apenas se classifica
 function finalHTML(m, title, isChampionStage) {
   const champ = m.winner
-    ? `<div class="champ"><img class="logo" src="${img(m.winner)}" alt=""><span>${isChampionStage ? "🏆" : "Classificado:"} ${esc(m.winner.name)}</span></div>`
+    ? `<div class="champ"><img class="logo" src="${img(m.winner)}" alt=""><span>${isChampionStage ? "🏆" : tr("Classificado:")} ${esc(m.winner.name)}</span></div>`
     : "";
   return col(title, matchHTML(m) + champ, "final");
 }
@@ -115,8 +115,8 @@ function treeHTML(sec, isChampionStage) {
     return out;
   };
   const [left, right] = sec.links.at(-1).map((src) => levels(src.from));
-  const final = finalHTML(sec.matches.at(-1), "Final", isChampionStage);
-  const column = (ms, lvl) => col(TREE_NAMES[lvl] ?? "Rodada", matchesHTML(ms));
+  const final = finalHTML(sec.matches.at(-1), tr("Final"), isChampionStage);
+  const column = (ms, lvl) => col(tr(TREE_NAMES[lvl] ?? "Rodada"), matchesHTML(ms));
   // celular: sem espelhar, os dois lados juntos em cada rodada, terminando na final
   if (narrow.matches) {
     const merged = left.map((ms, lvl) => [...ms, ...(right[lvl] || [])]);
@@ -142,16 +142,16 @@ function doubleElimHTML(sec, isChampionStage) {
     return [...Array(max)]
       .map((_, d) => {
         const ms = idx.filter((i) => depth[i] === d + 1).map((i) => matches[i]);
-        return col(d + 1 === max ? `Final ${label}` : `Rodada ${d + 1}`, matchesHTML(ms));
+        return col(d + 1 === max ? tr(`Final ${label}`) : tr("Rodada {0}", d + 1), matchesHTML(ms));
       })
       .join("");
   };
   return `<div class="bracket double">
     <div class="rows">
-      <div class="row"><span class="row-label">Chave superior</span><div class="cols">${row(false, "superior")}</div></div>
-      <div class="row"><span class="row-label">Chave inferior</span><div class="cols">${row(true, "inferior")}</div></div>
+      <div class="row"><span class="row-label">${tr("Chave superior")}</span><div class="cols">${row(false, "superior")}</div></div>
+      <div class="row"><span class="row-label">${tr("Chave inferior")}</span><div class="cols">${row(true, "inferior")}</div></div>
     </div>
-    ${finalHTML(matches[last], "Grande final", isChampionStage)}</div>`;
+    ${finalHTML(matches[last], tr("Grande final"), isChampionStage)}</div>`;
 }
 
 // formatos avulsos (ex.: duas partidas independentes): colunas por rodada
@@ -162,7 +162,7 @@ function depthColumnsHTML(sec) {
   );
   const max = Math.max(...depth);
   return `<div class="bracket cols">${[...Array(max)]
-    .map((_, d) => col(`Rodada ${d + 1}`, matchesHTML(sec.matches.filter((_, i) => depth[i] === d + 1))))
+    .map((_, d) => col(tr("Rodada {0}", d + 1), matchesHTML(sec.matches.filter((_, i) => depth[i] === d + 1))))
     .join("")}</div>`;
 }
 
@@ -170,7 +170,7 @@ function depthColumnsHTML(sec) {
 const hasFinal = (sec) => sec.matches.length > 0 && sec.links.at(-1).every((s) => s?.won);
 
 function bracketHTML(sec, isChampionStage) {
-  if (!sec.matches.length) return '<p class="muted">Ainda sem jogos.</p>';
+  if (!sec.matches.length) return `<p class="muted">${tr("Ainda sem jogos.")}</p>`;
   if (!hasFinal(sec)) return depthColumnsHTML(sec);
   const hasLowerBracket = sec.links.some((l) => l.some((s) => s && !s.won));
   return hasLowerBracket ? doubleElimHTML(sec, isChampionStage) : treeHTML(sec, isChampionStage);
@@ -197,11 +197,11 @@ function swissHTML(out, si) {
     for (const m of round.matches) (groups[m.record ?? ""] ??= []).push(m);
     const simulated = round.drawn != null;
     const body =
-      (simulated ? drawButton(round.drawn, "Sortear de novo") : "") +
+      (simulated ? drawButton(round.drawn, tr("Sortear de novo")) : "") +
       Object.entries(groups)
         .map(([rec, ms]) => `<div class="bucket">${rec ? `<span class="tag">${rec}</span>` : ""}${matchesHTML(ms)}</div>`)
         .join("");
-    return col(`Rodada ${i + 1}${simulated ? " · simulada" : ""}`, body, "swiss-round");
+    return col(tr("Rodada {0}", i + 1) + (simulated ? ` · ${tr("simulada")}` : ""), body, "swiss-round");
   });
   const table = out.table.length ? tableHTML(out.table, `${si}`, rowClass) : "";
   return `<div class="swiss">${table}<div class="bracket cols">${rounds.join("")}</div></div>`;
@@ -218,21 +218,21 @@ function stageHTML(out, si, all) {
         ? swissHTML(out, si)
         : out.sections.map((sec) => sectionTitle(out, sec) + bracketHTML(sec, isChampionStage)).join("");
   const extras =
-    (out.dirty ? `<span class="badge">com palpites</span>` : "") +
-    (out.drawn ? drawButton("ko", "Sortear chaveamento") : "");
+    (out.dirty ? `<span class="badge">${tr("com palpites")}</span>` : "") +
+    (out.drawn ? drawButton("ko", tr("Sortear chaveamento")) : "");
   return `<section class="stage"><header><h2>${esc(st.name)}</h2>${extras}</header>${body}</section>`;
 }
 
 function render() {
   $("#tabs").innerHTML = Object.keys(LEAGUES)
-    .map((k) => `<button class="${k === state.league ? "active" : ""}" data-league="${k}">${k}</button>`)
+    .map((k) => `<button class="${k === state.league ? "active" : ""}" data-league="${k}">${tr(k)}</button>`)
     .join("");
   $("#tour").innerHTML = (state.tours[state.league] || [])
     .slice(0, 9)
     .map((t, i) => `<option value="${i}" ${t === state.tour ? "selected" : ""}>${esc(tourName(t))}</option>`)
     .join("");
   if (!state.stages) {
-    $("#view").innerHTML = '<p class="muted">Carregando…</p>';
+    $("#view").innerHTML = `<p class="muted">${tr("Carregando…")}</p>`;
     return;
   }
   // o innerHTML recria tudo: guarda a rolagem lateral das chaves para não voltar ao início a cada clique
@@ -240,7 +240,7 @@ function render() {
   const roundsBefore = document.querySelectorAll(".swiss-round").length;
   $("#view").innerHTML = state.stages.length
     ? compute(state.stages, state.picks).map(stageHTML).join("")
-    : '<p class="muted">Sem dados para este torneio ainda.</p>';
+    : `<p class="muted">${tr("Sem dados para este torneio ainda.")}</p>`;
   document.querySelectorAll(".bracket").forEach((el, i) => (el.scrollLeft = scrolls[i] ?? 0));
   showTrail($("#view").querySelector(".team[data-t]:hover")?.dataset.t);
   // rodada nova da suíça nasce na última coluna, possivelmente fora da tela: leva a faixa até o fim
@@ -271,7 +271,7 @@ async function selectTour(tour, shared) {
     if (shared) savePicks();
     else render();
   } catch (e) {
-    $("#view").innerHTML = `<p class="err">Erro ao carregar ${esc(tour.slug)}: ${esc(e.message)}</p>`;
+    $("#view").innerHTML = `<p class="err">${esc(tr("Erro ao carregar {0}: {1}", tour.slug, e.message))}</p>`;
   }
 }
 
@@ -298,6 +298,15 @@ $("#tour").addEventListener("change", (e) =>
   selectTour(state.tours[state.league][e.target.value]),
 );
 
+// troca o idioma: os nomes das fases vêm traduzidos da API, então recarrega o torneio
+$("#lang").addEventListener("change", (e) => {
+  lang = e.target.value;
+  store.set("lang", lang);
+  translatePage();
+  if (state.tour) selectTour(state.tour);
+  else render();
+});
+
 $("#reset").addEventListener("click", () => {
   state.picks = {};
   savePicks();
@@ -309,7 +318,7 @@ $("#share").addEventListener("click", () => {
   const url = new URL(location.pathname, location.href);
   url.search = new URLSearchParams({ tour: state.tour.id, picks: JSON.stringify(state.picks) });
   url.hash = state.league;
-  const text = `Minha simulação do ${tourName(state.tour)} no Rift Sim`;
+  const text = tr("Minha simulação do {0} no Rift Sim", tourName(state.tour));
   const q = new URLSearchParams({ text, url });
   open(`https://twitter.com/intent/tweet?${q}`, "_blank", "noopener");
 });
@@ -361,6 +370,8 @@ $("#view").addEventListener("mouseover", (e) =>
 $("#view").addEventListener("mouseleave", () => showTrail(null));
 
 (async function init() {
+  $("#lang").value = lang;
+  translatePage();
   try {
     const lists = await Promise.all(Object.values(LEAGUES).map(loadTournaments));
     Object.keys(LEAGUES).forEach((k, i) => (state.tours[k] = lists[i]));
@@ -372,7 +383,7 @@ $("#view").addEventListener("mouseleave", () => showTrail(null));
       const mine = store.get(`picks:${tour.id}`);
       // não apaga os palpites da pessoa sem perguntar
       const replace = !mine || !Object.keys(mine).length || JSON.stringify(mine) === JSON.stringify(shared) ||
-        confirm("Este link tem uma simulação compartilhada. Substituir seus palpites deste torneio por ela?");
+        confirm(tr("Este link tem uma simulação compartilhada. Substituir seus palpites deste torneio por ela?"));
       state.league = league;
       history.replaceState(null, "", `${location.pathname}#${league}`);
       await selectTour(tour, replace ? shared : undefined);
@@ -381,6 +392,6 @@ $("#view").addEventListener("mouseleave", () => showTrail(null));
     const fromHash = decodeURIComponent(location.hash.slice(1));
     await selectLeague(LEAGUES[fromHash] ? fromHash : state.league);
   } catch (e) {
-    $("#view").innerHTML = `<p class="err">Não consegui carregar os dados (${esc(e.message)}). Tente recarregar.</p>`;
+    $("#view").innerHTML = `<p class="err">${esc(tr("Não consegui carregar os dados ({0}). Tente recarregar.", e.message))}</p>`;
   }
 })();

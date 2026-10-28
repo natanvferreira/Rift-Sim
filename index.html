@@ -12,23 +12,28 @@
     <main>
       <header class="top">
         <h1 class="brand"><img src="img/logo-192.png" alt="" width="32" height="32" />Rift Sim</h1>
-        <nav id="tabs" class="tabs" aria-label="Competição"></nav>
+        <nav id="tabs" class="tabs" aria-label="Competição" data-i18n-label></nav>
         <div class="controls">
-          <select id="tour" aria-label="Torneio"></select>
-          <button id="reset">Limpar palpites</button>
-          <button id="share">Compartilhar no X</button>
+          <select id="tour" aria-label="Torneio" data-i18n-label></select>
+          <button id="reset" data-i18n>Limpar palpites</button>
+          <button id="share" data-i18n>Compartilhar no X</button>
+          <select id="lang" aria-label="Idioma" data-i18n-label>
+            <option value="pt-BR">PT</option>
+            <option value="en-US">EN</option>
+          </select>
         </div>
       </header>
       <p class="legend">
-        <span>Clique no time para escolher o vencedor (de novo para desfazer). Em md3/md5, escolha o placar logo abaixo — ele conta no saldo da tabela. Passe o mouse num time para ver o caminho dele.</span>
-        <span><i class="real"></i>Resultado real</span>
-        <span><i class="pick"></i>Seu palpite</span>
+        <span data-i18n>Clique no time para escolher o vencedor (de novo para desfazer). Em md3/md5, escolha o placar logo abaixo — ele conta no saldo da tabela. Passe o mouse num time para ver o caminho dele.</span>
+        <span><i class="real"></i><span data-i18n>Resultado real</span></span>
+        <span><i class="pick"></i><span data-i18n>Seu palpite</span></span>
       </p>
       <div id="view"></div>
-      <footer class="muted">
+      <footer class="muted" data-i18n>
         Dados ao vivo da API do lolesports.com. Projeto de fã, sem ligação com a Riot Games.
       </footer>
     </main>
+    <script src="js/i18n.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>

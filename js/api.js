@@ -13,11 +13,11 @@ const LEAGUES = {
 };
 
 async function api(path, params) {
-  const query = new URLSearchParams({ hl: "pt-BR", ...params });
+  const query = new URLSearchParams({ hl: lang, ...params });
   const res = await fetch(`${API_URL}${path}?${query}`, {
     headers: { "x-api-key": API_KEY },
   });
-  if (!res.ok) throw new Error(`API respondeu ${res.status}`);
+  if (!res.ok) throw new Error(tr("API respondeu {0}", res.status));
   return (await res.json()).data;
 }
 
