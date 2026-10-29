@@ -6,9 +6,9 @@ Simulador de campeonatos de League of Legends com **dados reais**: CBLOL, Circui
 Você clica no time que vence, escolhe o placar da série e vê a tabela, a fase suíça e o chaveamento se
 recalcularem até o campeão.
 
-Site 100% estático: roda no GitHub Pages ou abrindo o `index.html` direto no navegador, sem build. A única
-dependência é o [Select2](https://select2.org) (com jQuery) do menu de torneios, carregado do cdnjs; sem ele o
-menu vira um select comum.
+Site 100% estático: roda no GitHub Pages ou abrindo o `index.html` direto no navegador, sem build. As únicas
+dependências vêm do cdnjs: o [Select2](https://select2.org) (com jQuery) do menu de torneios, que sem ele vira
+um select comum, e o [html2canvas](https://html2canvas.hertzen.com) da imagem de compartilhar.
 
 ## Como usar
 
@@ -24,8 +24,8 @@ menu vira um select comum.
   pela regra oficial; 🎲 **Sortear chaveamento** refaz.
 - **Data do jogo:** aparece no topo de cada partida, no fuso do seu navegador.
 - **Ao vivo:** a partida que está acontecendo ganha o selo **AO VIVO** e um link **Assistir** (Twitch/YouTube).
-- **Time favorito:** clique na ☆ ao lado do time na tabela; o caminho dele fica sempre marcado. Um por liga,
-  salvo no navegador.
+- **Time favorito:** escolha no menu **★ Favorito**; o caminho dele fica sempre marcado. Um por liga, salvo no
+  navegador.
 - **Caminho do time:** passe o mouse num time para destacar todas as partidas dele, em todas as fases.
 - **Limpar palpites:** volta tudo ao resultado real. Os palpites ficam salvos no navegador, por torneio.
 - **Link direto:** `index.html#CBLOL`, `#Desafiante`, `#LCK`, `#LPL`, `#LCS`, `#MSI`, `#Mundial`.
@@ -60,6 +60,8 @@ O site fica em `https://<seu-usuario>.github.io/rift-sim/`.
 index.html          página
 css/style.css       visual
 img/                logo (original e versão 192px usada no site e no favicon)
+img/teams/          logos dos times, para a imagem de compartilhar (gerados por tools/logos.py)
+tools/logos.py      baixa e reduz os logos de todas as ligas do site
 js/engine.js        lógica pura: resultados reais + palpites -> tabelas, suíça, chaveamentos
 js/api.js           acesso à API do lolesports
 js/ui.js            estado, renderização e eventos
@@ -68,6 +70,20 @@ tests/engine.test.js
 
 Os scripts são carregados em ordem (`engine` → `api` → `ui`) como scripts comuns, sem módulos, para o
 `index.html` funcionar também aberto direto do disco.
+
+## Logos dos times
+
+A imagem de compartilhar é desenhada num canvas, e o servidor de imagens do lolesports não libera os logos
+(CORS) para isso. Por isso uma cópia reduzida fica em `img/teams/`. Quando aparecerem times novos, rode
+(precisa do Python com Pillow) e faça commit da pasta:
+
+```bash
+python tools/logos.py
+```
+
+Só baixa o que ainda não existe. Time sem logo local sai na imagem só com a sigla; no site nada muda, que
+continua usando os logos do lolesports. Fora do GitHub Pages, abrindo o `index.html` direto do disco, o
+navegador não deixa exportar a imagem, e o botão só abre o post com o link.
 
 ## Testes
 

@@ -96,11 +96,6 @@ const col = (title, body, cls = "") =>
 const drawButton = (key, label) =>
   `<button class="redraw" data-draw="${key}">🎲 ${label}</button>`;
 
-const favHTML = (t) => {
-  const on = t.id === state.fav;
-  return `<button class="star${on ? " on" : ""}" data-fav="${esc(t.id)}" aria-pressed="${on}" aria-label="${esc(tr("Favoritar {0}", t.name))}">${on ? "★" : "☆"}</button>`;
-};
-
 function tableHTML(rows, key, rowClass = () => "") {
   const before = state.lastPos.get(key);
   state.lastPos.set(key, new Map(rows.map((r, i) => [r.team.id, i])));
@@ -115,7 +110,7 @@ function tableHTML(rows, key, rowClass = () => "") {
       .map(
         (r, i) => `<tr class="${rowClass(r)}">
       <td class="pos">${i + 1}${arrow(r.team.id, i)}</td>
-      <td><span class="name"><img class="logo" src="${img(r.team)}" alt="" loading="lazy">${esc(r.team.name)}${favHTML(r.team)}</span></td>
+      <td><span class="name"><img class="logo" src="${img(r.team)}" alt="" loading="lazy">${esc(r.team.name)}</span></td>
       <td>${r.w}-${r.l}</td><td>${r.gd > 0 ? "+" : ""}${r.gd}</td></tr>`,
       )
       .join("")}</tbody></table>`;
@@ -259,6 +254,15 @@ function render() {
     .map((t, i) => `<option value="${i}" ${t === state.tour ? "selected" : ""}>${esc(tourName(t))}</option>`)
     .join("");
   window.jQuery?.("#tour").trigger("change.select2"); // innerHTML não avisa o select2
+  // times do torneio aberto, em qualquer formato (o MSI, por exemplo, não tem tabela)
+  const teams = new Map();
+  for (const m of (state.stages || []).flatMap((st) => st.sections.flatMap((s) => s.matches))) {
+    for (const t of m.teams) if (!isTBD(t)) teams.set(t.id, t);
+  }
+  $("#fav").innerHTML = `<option value="">${tr("★ Favorito")}</option>` + [...teams.values()]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((t) => `<option value="${esc(t.id)}" ${t.id === state.fav ? "selected" : ""}>★ ${esc(t.name)}</option>`)
+    .join("");
   if (!state.stages) {
     $("#view").innerHTML = `<p class="muted">${tr("Carregando…")}</p>`;
     return;
@@ -355,20 +359,76 @@ $("#lang").addEventListener("change", (e) => {
   else render();
 });
 
+$("#fav").addEventListener("change", (e) => {
+  state.fav = e.target.value || null;
+  store.set(`fav:${state.league}`, state.fav);
+  render();
+});
+
 $("#reset").addEventListener("click", () => {
   state.picks = {};
   savePicks();
 });
 
-// os palpites vão no próprio link: quem abrir vê a mesma simulação
-$("#share").addEventListener("click", () => {
+// PNG da última fase (onde sai o campeão) com os palpites; os logos vêm de img/teams (tools/logos.py),
+// porque os do lolesports não liberam CORS e o canvas não exportaria
+async function stageImage() {
+  const stage = [...document.querySelectorAll("#view .stage")].at(-1);
+  if (!stage || !window.html2canvas) return null;
+  const width = Math.max(stage.offsetWidth, ...[...stage.querySelectorAll(".bracket")].map((b) => b.scrollWidth + 40));
+  const canvas = await html2canvas(stage, {
+    width,
+    windowWidth: Math.max(innerWidth, width),
+    backgroundColor: getComputedStyle(document.body).backgroundColor,
+    onclone: (doc, el) => {
+      el.style.width = `${width}px`;
+      for (const b of el.querySelectorAll(".bracket")) b.style.overflow = "visible";
+      for (const x of el.querySelectorAll(".redraw, .scores")) x.remove();
+      const h2 = el.querySelector("h2");
+      h2.textContent = `${tourName(state.tour)} · ${h2.textContent}`;
+      // img nova: o html2canvas lê o currentSrc, que na original continua sendo o logo remoto
+      const logos = [...el.querySelectorAll("img.logo")].map((im) => {
+        const local = Object.assign(doc.createElement("img"), { className: im.className, src: `img/teams/${im.src.split("/").pop()}` });
+        im.replaceWith(local);
+        return local.decode().catch(() => {}); // logo que falta só fica em branco
+      });
+      return Promise.all(logos);
+    },
+  });
+  return new Promise((ok) => canvas.toBlob(ok, "image/png"));
+}
+
+// os palpites vão no próprio link: quem abrir vê a mesma simulação; a imagem vai junto
+$("#share").addEventListener("click", async () => {
   if (!state.tour) return;
   const url = new URL(location.pathname, location.href);
   url.search = new URLSearchParams({ tour: state.tour.id, picks: JSON.stringify(state.picks) });
   url.hash = state.league;
   const text = tr("Minha simulação do {0} no Rift Sim", tourName(state.tour));
-  const q = new URLSearchParams({ text, url });
-  open(`https://twitter.com/intent/tweet?${q}`, "_blank", "noopener");
+  const intent = `https://twitter.com/intent/tweet?${new URLSearchParams({ text, url })}`;
+  // celular: a folha de compartilhar do sistema manda a imagem direto para o app do X
+  const probe = new File([""], "x.png", { type: "image/png" });
+  const native = matchMedia("(pointer: coarse)").matches && navigator.canShare?.({ files: [probe] });
+  // computador: a aba abre já no clique (depois do await o navegador bloquearia o pop-up) e a imagem é baixada para anexar
+  const tab = native ? null : open("about:blank", "_blank");
+  const blob = await stageImage().catch(() => null);
+  const file = blob && new File([blob], "rift-sim.png", { type: "image/png" });
+  if (native && file) {
+    try {
+      return await navigator.share({ files: [file], text: `${text} ${url}` });
+    } catch (e) {
+      if (e.name === "AbortError") return; // a pessoa fechou a folha de compartilhar
+    }
+  }
+  if (file) {
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(file), download: file.name });
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+  }
+  if (tab) {
+    tab.opener = null;
+    tab.location = intent;
+  } else location.href = intent;
 });
 
 // palpites vindos de um link: só aceita { idDaPartida: "idDoTime [placar]" | número do sorteio }
@@ -384,12 +444,6 @@ function parseShared(raw) {
 }
 
 $("#view").addEventListener("click", (e) => {
-  const fav = e.target.closest("[data-fav]");
-  if (fav) {
-    state.fav = fav.dataset.fav === state.fav ? null : fav.dataset.fav;
-    store.set(`fav:${state.league}`, state.fav);
-    return render();
-  }
   const draw = e.target.closest("[data-draw]");
   const team = e.target.closest("[data-m]");
   const { picks } = state;
@@ -428,9 +482,13 @@ async function refreshLive() {
   if (document.hidden) return;
   const live = await loadLive().catch(() => null);
   if (!live) return;
-  const changed = [...live.keys()].join() !== [...state.live.keys()].join();
+  const before = state.live;
   state.live = live;
-  if (!changed || !state.stages) return;
+  if (!state.stages) return;
+  // só conta jogo do torneio aberto (o getLive traz todas as ligas), na ordem das fases
+  const ids = state.stages.flatMap((st) => st.sections.flatMap((s) => s.matches.map((m) => m.id)));
+  const key = (l) => ids.filter((id) => l.has(id)).join();
+  if (key(before) === key(live)) return;
   const tour = state.tour;
   const stages = await loadStages(tour, state.tours[state.league]).catch(() => null);
   if (stages && state.tour === tour) state.stages = stages;

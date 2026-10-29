@@ -333,21 +333,6 @@ select:focus-visible {
   color: var(--gold);
 }
 
-.star {
-  border: 0;
-  background: none;
-  padding: 0 4px;
-  margin-left: 4px;
-  font-size: 16px;
-  line-height: 1;
-  color: var(--muted);
-}
-
-.star.on,
-.star:hover {
-  color: var(--gold);
-}
-
 .when.live {
   display: flex;
   justify-content: space-between;
@@ -649,10 +634,15 @@ footer {
     flex-wrap: wrap;
   }
 
-  /* menu de torneios numa linha só; botões e idioma dividem a de baixo */
-  .controls #tour,
-  .controls .select2-container {
-    flex: 1 1 100%;
+  /* torneio e favorito numa linha; botões e idioma dividem a de baixo */
+  .controls .select2-container,
+  .controls #tour {
+    flex: 2 1 55%;
+    min-width: 0;
+  }
+
+  .controls #fav {
+    flex: 1 1 35%;
     min-width: 0;
   }
 

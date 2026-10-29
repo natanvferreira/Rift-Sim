@@ -17,7 +17,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 - Data e hora de cada partida (no fuso de quem está vendo), quando a API informa.
 - Jogo ao vivo: selo "AO VIVO" e link para a transmissão; a página confere a cada minuto e atualiza os
   resultados quando um jogo começa ou termina.
-- Time favorito: a estrela ☆ na tabela fixa o time (um por liga) e deixa o caminho dele sempre marcado.
+- Time favorito: o menu "★ Favorito" fixa o time (um por liga) e deixa o caminho dele sempre marcado.
+- "Compartilhar no X" agora gera uma imagem da última fase com os seus palpites: no celular vai direto pela
+  folha de compartilhar; no computador é baixada para anexar no post que abre.
+- Logos dos times guardados no site (`img/teams/`, baixados por `tools/logos.py`) para a imagem poder
+  desenhá-los.
 
 ### Alterado
 
