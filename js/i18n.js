@@ -5,6 +5,7 @@ const EN = {
   "LTA Sul": "LTA South",
   "LTA Norte": "LTA North",
   "Nenhum torneio encontrado": "No tournament found",
+  "Buscar torneio": "Search tournament",
   "A definir": "TBD",
   Time: "Team",
   "V-D": "W-L",

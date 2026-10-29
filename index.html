@@ -6,7 +6,7 @@
     <title>Rift Sim</title>
     <link rel="icon" type="image/png" href="img/logo-192.png" />
     <link rel="apple-touch-icon" href="img/logo-192.png" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" integrity="sha512-aD9ophpFQ61nFZP6hXYu4Q/b/USW7rpLCQLX6Bi0WJHXNO7Js/fUENpBQf/+P4NtpzNX0jSgR5zVvPOJp+W2Kg==" crossorigin="anonymous" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
@@ -15,6 +15,7 @@
         <h1 class="brand"><img src="img/logo-192.png" alt="" width="32" height="32" />Rift Sim</h1>
         <nav id="tabs" class="tabs" aria-label="Competição" data-i18n-label></nav>
         <div class="controls">
+          <span id="tour-label" hidden data-i18n>Torneio</span>
           <select id="tour" aria-label="Torneio" data-i18n-label></select>
           <button id="reset" data-i18n>Limpar palpites</button>
           <button id="share" data-i18n>Compartilhar no X</button>
@@ -34,8 +35,8 @@
         Dados ao vivo da API do lolesports.com. Projeto de fã, sem ligação com a Riot Games.
       </footer>
     </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js" integrity="sha512-4MvcHwcbqXKUHB6Lx3Zb5CEAVoE9u84qN+ZSMM6s7z8IeJriExrV3ND5zRze9mxNlABJ6k864P/Vl8m0Sd3DtQ==" crossorigin="anonymous"></script>
     <script src="js/i18n.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/api.js"></script>

@@ -232,7 +232,6 @@ function render() {
     .map((t, i) => `<option value="${i}" ${t === state.tour ? "selected" : ""}>${esc(tourName(t))}</option>`)
     .join("");
   window.jQuery?.("#tour").trigger("change.select2"); // innerHTML não avisa o select2
-  $(".select2-selection")?.setAttribute("aria-label", tr("Torneio"));
   if (!state.stages) {
     $("#view").innerHTML = `<p class="muted">${tr("Carregando…")}</p>`;
     return;
@@ -296,13 +295,22 @@ $("#tabs").addEventListener("click", (e) => {
   if (b) selectLeague(b.dataset.league);
 });
 
-const onTour = (e) => selectTour(state.tours[state.league][e.target.value]);
+const onTour = (e) => {
+  const tour = state.tours[state.league][e.target.value];
+  if (tour !== state.tour) selectTour(tour); // o select2 dispara change até ao clicar no torneio já aberto
+};
 // select2 (menu com busca) dispara o change pelo jQuery, que não chega ao addEventListener; sem a CDN fica o select comum
-if (window.jQuery?.fn.select2)
+if (window.jQuery?.fn.select2) {
   jQuery("#tour")
-    .select2({ width: "auto", dropdownAutoWidth: true, language: { noResults: () => tr("Nenhum torneio encontrado") } })
+    .select2({
+      width: "auto",
+      dropdownAutoWidth: true,
+      language: { noResults: () => tr("Nenhum torneio encontrado"), search: () => tr("Buscar torneio") },
+    })
     .on("change", onTour);
-else $("#tour").addEventListener("change", onTour);
+  // o select2 nomeia a caixa só pelo torneio escolhido; junta o rótulo "Torneio" antes
+  $(".select2-selection").setAttribute("aria-labelledby", "tour-label select2-tour-container");
+} else $("#tour").addEventListener("change", onTour);
 
 // troca o idioma: os nomes das fases vêm traduzidos da API, então recarrega o torneio
 $("#lang").addEventListener("change", (e) => {
