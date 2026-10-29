@@ -58,6 +58,41 @@ select:focus-visible {
   color: var(--muted);
 }
 
+/* ícone + texto no mesmo botão */
+button > i + span,
+.fav-pick > i + select {
+  margin-left: 8px;
+}
+
+/* ações do torneio aberto, logo acima das fases */
+.tourbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.fav-pick {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--gold);
+}
+
+.fav-pick:hover,
+.fav-pick:focus-within {
+  border-color: var(--gold);
+}
+
+.fav-pick select {
+  border: 0;
+  background: transparent;
+  padding-left: 0;
+}
+
 /* select2 (menu de torneios com busca) no tema escuro */
 .select2-container--default .select2-selection--single {
   height: auto;
@@ -634,21 +669,25 @@ footer {
     flex-wrap: wrap;
   }
 
-  /* torneio e favorito numa linha; botões e idioma dividem a de baixo */
+  /* torneio, X (só o ícone) e idioma numa linha */
   .controls .select2-container,
   .controls #tour {
-    flex: 2 1 55%;
-    min-width: 0;
-  }
-
-  .controls #fav {
-    flex: 1 1 35%;
-    min-width: 0;
-  }
-
-  .controls button {
     flex: 1;
-    padding: 8px 6px;
+    min-width: 0;
+  }
+
+  .controls #share span {
+    display: none;
+  }
+
+  .fav-pick {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fav-pick select {
+    flex: 1;
+    min-width: 0;
   }
 
   .controls #lang {

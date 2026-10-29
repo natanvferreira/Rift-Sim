@@ -8,7 +8,7 @@ const EN = {
   "Buscar torneio": "Search tournament",
   "AO VIVO": "LIVE",
   Assistir: "Watch",
-  "★ Favorito": "★ Favorite",
+  "Sem favorito": "No favorite",
   "Time favorito": "Favorite team",
   "A definir": "TBD",
   Time: "Team",

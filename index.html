@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="img/logo-192.png" />
     <link rel="apple-touch-icon" href="img/logo-192.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" integrity="sha512-aD9ophpFQ61nFZP6hXYu4Q/b/USW7rpLCQLX6Bi0WJHXNO7Js/fUENpBQf/+P4NtpzNX0jSgR5zVvPOJp+W2Kg==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
@@ -17,9 +18,7 @@
         <div class="controls">
           <span id="tour-label" hidden data-i18n>Torneio</span>
           <select id="tour" aria-label="Torneio" data-i18n-label></select>
-          <select id="fav" aria-label="Time favorito" data-i18n-label></select>
-          <button id="reset" data-i18n>Limpar palpites</button>
-          <button id="share" data-i18n>Compartilhar no X</button>
+          <button id="share" aria-label="Compartilhar no X" data-i18n-label><i class="fa-brands fa-x-twitter" aria-hidden="true"></i><span data-i18n>Compartilhar no X</span></button>
           <select id="lang" aria-label="Idioma" data-i18n-label>
             <option value="pt-BR">PT</option>
             <option value="en-US">EN</option>
@@ -31,6 +30,11 @@
         <span><i class="real"></i><span data-i18n>Resultado real</span></span>
         <span><i class="pick"></i><span data-i18n>Seu palpite</span></span>
       </p>
+      <!-- ações do torneio aberto: ficam junto dele, fora da barra do topo -->
+      <div id="tourbar" class="tourbar" hidden>
+        <label class="fav-pick"><i class="fa-solid fa-star" aria-hidden="true"></i><select id="fav" aria-label="Time favorito" data-i18n-label></select></label>
+        <button id="reset"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i><span data-i18n>Limpar palpites</span></button>
+      </div>
       <div id="view"></div>
       <footer class="muted" data-i18n>
         Dados ao vivo da API do lolesports.com. Projeto de fã, sem ligação com a Riot Games.

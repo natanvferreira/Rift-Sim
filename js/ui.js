@@ -75,7 +75,7 @@ function streamURL(e) {
 function whenHTML(m) {
   const live = state.live.get(m.id);
   if (live) {
-    return `<div class="when live"><span>● ${tr("AO VIVO")}</span><a href="${esc(streamURL(live))}" target="_blank" rel="noopener">${tr("Assistir")} ↗</a></div>`;
+    return `<div class="when live"><span><i class="fa-solid fa-tower-broadcast" aria-hidden="true"></i> ${tr("AO VIVO")}</span><a href="${esc(streamURL(live))}" target="_blank" rel="noopener">${tr("Assistir")} <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>`;
   }
   return m.start
     ? `<time class="when" datetime="${esc(m.start)}">${new Date(m.start).toLocaleString(lang, { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</time>`
@@ -94,7 +94,7 @@ const col = (title, body, cls = "") =>
   `<div class="col ${cls}"><h4>${esc(title)}</h4><div class="col-body">${body}</div></div>`;
 
 const drawButton = (key, label) =>
-  `<button class="redraw" data-draw="${key}">🎲 ${label}</button>`;
+  `<button class="redraw" data-draw="${key}"><i class="fa-solid fa-dice" aria-hidden="true"></i><span>${label}</span></button>`;
 
 function tableHTML(rows, key, rowClass = () => "") {
   const before = state.lastPos.get(key);
@@ -102,7 +102,7 @@ function tableHTML(rows, key, rowClass = () => "") {
   const arrow = (id, i) => {
     const p = before?.get(id);
     if (p === undefined || p === i) return "";
-    return p > i ? `<span class="up">▲${p - i}</span>` : `<span class="down">▼${i - p}</span>`;
+    return p > i ? `<span class="up"><i class="fa-solid fa-caret-up" aria-hidden="true"></i>${p - i}</span>` : `<span class="down"><i class="fa-solid fa-caret-down" aria-hidden="true"></i>${i - p}</span>`;
   };
   return `<table class="standings">
     <thead><tr><th>#</th><th>${tr("Time")}</th><th>${tr("V-D")}</th><th>${tr("Saldo")}</th></tr></thead>
@@ -121,7 +121,7 @@ function tableHTML(rows, key, rowClass = () => "") {
 // troféu só na última fase com final; nas anteriores o vencedor apenas se classifica
 function finalHTML(m, title, isChampionStage) {
   const champ = m.winner
-    ? `<div class="champ"><img class="logo" src="${img(m.winner)}" alt=""><span>${isChampionStage ? "🏆" : tr("Classificado:")} ${esc(m.winner.name)}</span></div>`
+    ? `<div class="champ"><img class="logo" src="${img(m.winner)}" alt=""><span>${isChampionStage ? '<i class="fa-solid fa-trophy" aria-hidden="true"></i>' : tr("Classificado:")} ${esc(m.winner.name)}</span></div>`
     : "";
   return col(title, matchHTML(m) + champ, "final");
 }
@@ -259,10 +259,11 @@ function render() {
   for (const m of (state.stages || []).flatMap((st) => st.sections.flatMap((s) => s.matches))) {
     for (const t of m.teams) if (!isTBD(t)) teams.set(t.id, t);
   }
-  $("#fav").innerHTML = `<option value="">${tr("★ Favorito")}</option>` + [...teams.values()]
+  $("#fav").innerHTML = `<option value="">${tr("Sem favorito")}</option>` + [...teams.values()]
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((t) => `<option value="${esc(t.id)}" ${t.id === state.fav ? "selected" : ""}>★ ${esc(t.name)}</option>`)
+    .map((t) => `<option value="${esc(t.id)}" ${t.id === state.fav ? "selected" : ""}>${esc(t.name)}</option>`)
     .join("");
+  $("#tourbar").hidden = !state.stages?.length;
   if (!state.stages) {
     $("#view").innerHTML = `<p class="muted">${tr("Carregando…")}</p>`;
     return;

@@ -8,7 +8,8 @@ recalcularem até o campeão.
 
 Site 100% estático: roda no GitHub Pages ou abrindo o `index.html` direto no navegador, sem build. As únicas
 dependências vêm do cdnjs: o [Select2](https://select2.org) (com jQuery) do menu de torneios, que sem ele vira
-um select comum, e o [html2canvas](https://html2canvas.hertzen.com) da imagem de compartilhar.
+um select comum, o [html2canvas](https://html2canvas.hertzen.com) da imagem de compartilhar e os ícones do
+[Font Awesome](https://fontawesome.com).
 
 ## Como usar
 
@@ -24,7 +25,7 @@ um select comum, e o [html2canvas](https://html2canvas.hertzen.com) da imagem de
   pela regra oficial; 🎲 **Sortear chaveamento** refaz.
 - **Data do jogo:** aparece no topo de cada partida, no fuso do seu navegador.
 - **Ao vivo:** a partida que está acontecendo ganha o selo **AO VIVO** e um link **Assistir** (Twitch/YouTube).
-- **Time favorito:** escolha no menu **★ Favorito**; o caminho dele fica sempre marcado. Um por liga, salvo no
+- **Time favorito:** escolha no menu de favorito, logo acima do torneio; o caminho dele fica sempre marcado. Um por liga, salvo no
   navegador.
 - **Caminho do time:** passe o mouse num time para destacar todas as partidas dele, em todas as fases.
 - **Limpar palpites:** volta tudo ao resultado real. Os palpites ficam salvos no navegador, por torneio.

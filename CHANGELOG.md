@@ -17,13 +17,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 - Data e hora de cada partida (no fuso de quem está vendo), quando a API informa.
 - Jogo ao vivo: selo "AO VIVO" e link para a transmissão; a página confere a cada minuto e atualiza os
   resultados quando um jogo começa ou termina.
-- Time favorito: o menu "★ Favorito" fixa o time (um por liga) e deixa o caminho dele sempre marcado.
+- Time favorito: o menu de favorito, acima do torneio, fixa o time (um por liga) e deixa o caminho dele sempre
+  marcado.
+- Ícones ([Font Awesome](https://fontawesome.com)) nos botões, no ao vivo, no troféu e nas setas da tabela.
 - "Compartilhar no X" agora gera uma imagem da última fase com os seus palpites: no celular vai direto pela
   folha de compartilhar; no computador é baixada para anexar no post que abre.
 - Logos dos times guardados no site (`img/teams/`, baixados por `tools/logos.py`) para a imagem poder
   desenhá-los.
 
 ### Alterado
+
+- "Limpar palpites" e o favorito saíram do topo e ficam numa barra logo acima do torneio; no celular o
+  botão do X mostra só o ícone.
 
 - Layout no celular: topo compacto e não fixo, abas ocupando a largura, colunas mais estreitas (duas rodadas
   lado a lado), grande final abaixo das chaves e mata-mata em sequência (quartas → semi → final) em vez de
