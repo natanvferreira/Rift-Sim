@@ -28,6 +28,7 @@ const EN = {
   "Chave superior": "Upper bracket",
   "Chave inferior": "Lower bracket",
   "Grande final": "Grand final",
+  "Disputa de 3º lugar": "Third-place match",
   "Ainda sem jogos.": "No matches yet.",
   "Sortear de novo": "Redraw",
   simulada: "simulated",

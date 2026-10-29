@@ -189,14 +189,26 @@ function depthColumnsHTML(sec) {
     .join("")}</div>`;
 }
 
-// chave com final de verdade: a última partida junta dois vencedores
-const hasFinal = (sec) => sec.matches.length > 0 && sec.links.at(-1).every((s) => s?.won);
+// disputa de 3º lugar (ex.: EWC): a última partida junta dois perdedores, logo depois da final
+const isThirdPlace = (sec) => sec.matches.length > 2 && sec.links.at(-1).every((s) => s && !s.won);
+const withoutThird = (sec) =>
+  isThirdPlace(sec) ? { ...sec, matches: sec.matches.slice(0, -1), links: sec.links.slice(0, -1) } : sec;
+
+// chave com final de verdade: a última partida (fora a de 3º lugar) junta dois vencedores
+const hasFinal = (sec) => {
+  const { matches, links } = withoutThird(sec);
+  return matches.length > 0 && links.at(-1).every((s) => s?.won);
+};
 
 function bracketHTML(sec, isChampionStage) {
   if (!sec.matches.length) return `<p class="muted">${tr("Ainda sem jogos.")}</p>`;
   if (!hasFinal(sec)) return depthColumnsHTML(sec);
-  const hasLowerBracket = sec.links.some((l) => l.some((s) => s && !s.won));
-  return hasLowerBracket ? doubleElimHTML(sec, isChampionStage) : treeHTML(sec, isChampionStage);
+  const third = isThirdPlace(sec)
+    ? `<div class="bracket cols">${col(tr("Disputa de 3º lugar"), matchHTML(sec.matches.at(-1)))}</div>`
+    : "";
+  const main = withoutThird(sec);
+  const hasLowerBracket = main.links.some((l) => l.some((s) => s && !s.won));
+  return (hasLowerBracket ? doubleElimHTML(main, isChampionStage) : treeHTML(main, isChampionStage)) + third;
 }
 
 // ---------- fases ----------
