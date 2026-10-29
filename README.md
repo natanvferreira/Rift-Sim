@@ -22,6 +22,7 @@ menu vira um select comum.
   Use 🎲 **Sortear de novo** para outro sorteio.
 - **Mata-mata do Mundial:** quando as quartas ainda não existem (ou você mudou a suíça), o chaveamento é sorteado
   pela regra oficial; 🎲 **Sortear chaveamento** refaz.
+- **Data do jogo:** aparece no topo de cada partida, no fuso do seu navegador.
 - **Caminho do time:** passe o mouse num time para destacar todas as partidas dele, em todas as fases.
 - **Limpar palpites:** volta tudo ao resultado real. Os palpites ficam salvos no navegador, por torneio.
 - **Link direto:** `index.html#CBLOL`, `#Desafiante`, `#LCK`, `#LPL`, `#LCS`, `#MSI`, `#Mundial`.
@@ -77,13 +78,14 @@ completa sem revanches e sorteio das quartas. Requer Node 18+.
 ## Dados
 
 Vêm ao vivo da API pública do [lolesports.com](https://lolesports.com), a mesma usada pelo site oficial
-(`getTournamentsForLeague`, `getStandings`, `getSchedule`). A chave em `js/api.js` é a pública embutida no
+(`getTournamentsForLeague`, `getStandings`, `getSchedule`, `getCompletedEvents`). A chave em `js/api.js` é a pública embutida no
 próprio lolesports.com; se a Riot trocá-la, o site para de carregar até ela ser atualizada.
 
 ## Limitações conhecidas
 
 - Só aparecem as edições que a API do lolesports tem (ex.: não há Mundial 2012–2013 nem 2017–2019, nem CBLOL
   antes de 2020).
+- A data das partidas só aparece de 2024 em diante: a API não guarda o calendário dos torneios mais antigos.
 - Desempate não considera confronto direto.
 - A 1ª rodada da suíça sempre vem do sorteio real (a API não informa os tiers dos times).
 - O time que passa pelo palpite herda a vaga (posição na tabela ou saída da chave) do time real na fase

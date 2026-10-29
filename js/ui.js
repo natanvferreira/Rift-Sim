@@ -60,10 +60,16 @@ function scoresHTML(m) {
   return `<div class="scores"><span>${esc(m.winner.code)}</span>${chips.join("")}</div>`;
 }
 
+// "dom., 20/07, 17:00" no fuso de quem está vendo
+const whenHTML = (m) =>
+  m.start
+    ? `<time class="when" datetime="${esc(m.start)}">${new Date(m.start).toLocaleString(lang, { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</time>`
+    : "";
+
 function matchHTML(m) {
   const open = !isTBD(m.teams[0]) && !isTBD(m.teams[1]);
   const active = m.id === state.active ? " active" : "";
-  return `<div class="match${active}">${teamHTML(m, 0, open)}${teamHTML(m, 1, open)}${scoresHTML(m)}</div>`;
+  return `<div class="match${active}">${whenHTML(m)}${teamHTML(m, 0, open)}${teamHTML(m, 1, open)}${scoresHTML(m)}</div>`;
 }
 
 const matchesHTML = (ms) => ms.map(matchHTML).join("");

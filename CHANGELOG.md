@@ -14,6 +14,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 - Circuito Desafiante (aba "Desafiante", link `#Desafiante`).
 - A aba CBLOL também traz os splits de 2025, quando o CBLOL virou a LTA Sul; a aba LCS, os da LTA Norte.
 - Busca no menu de torneios (Select2): digite parte do nome, ex. "2021" ou "summer".
+- Data e hora de cada partida (no fuso de quem está vendo), quando a API informa.
 
 ### Alterado
 
@@ -28,6 +29,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
   os resultados dele; enquanto a vaga não é decidida, aparece "A definir".
 - Trocar o `#liga` na URL ou usar o voltar do navegador agora troca a liga sem recarregar a página.
 - O menu de torneios mostrava só as 9 edições mais recentes; agora lista todas (ex.: CBLOL 2021).
+- Topo no celular estourava a largura da tela: abas e botões agora quebram linha.
 
 ## [1.0.0] - 2026-10-27
 

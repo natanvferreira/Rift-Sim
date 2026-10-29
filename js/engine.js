@@ -48,7 +48,7 @@ function parsePick(pick) {
 // resultado real vale se os dois times batem com o jogo real; palpite do usuário sobrescreve
 // (inclusive só o placar, mantendo o vencedor real)
 function resolve(id, a, b, real, picks, bo = 1) {
-  const m = { id, bo, teams: [a, b], winner: null, score: null, picked: false };
+  const m = { id, bo, start: real?.start, teams: [a, b], winner: null, score: null, picked: false };
   if (isTBD(a) || isTBD(b)) return m;
   const rt = real && [a, b].map((t) => real.teams.find((x) => x.id === t.id));
   if (rt?.every((t) => t?.result) && real.state === "completed") {

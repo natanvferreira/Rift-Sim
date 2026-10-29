@@ -48,36 +48,42 @@ async function templateLinks(list, tour, slug, sectionIndex, size) {
   }
 }
 
-// melhor-de-N das partidas, que só o calendário informa (a 1ª página cobre o torneio atual)
-async function loadBestOf(leagueId) {
-  const data = await api("getSchedule", { leagueId });
+// data e melhor-de-N das partidas, que só o calendário informa: a 1ª página do getSchedule cobre os
+// próximos jogos da liga, o getCompletedEvents os já jogados do torneio (a API só guarda de 2024 em diante)
+async function loadEvents(tour) {
+  const lists = await Promise.all([
+    api("getSchedule", { leagueId: tour.leagueId }).catch(() => null),
+    api("getCompletedEvents", { tournamentId: tour.id }).catch(() => null),
+  ]);
   return new Map(
-    data.schedule.events
-      .filter((e) => e.match?.strategy)
-      .map((e) => [e.match.id, e.match.strategy.count]),
+    lists.flatMap((d) => d?.schedule.events || []).filter((e) => e.match).map((e) => [e.match.id, e]),
   );
 }
 
 // md de cada partida: calendário; senão o placar real (2-1 -> md3); senão o maior md da seção
-function annotateBestOf(sections, bestOf) {
+function annotateEvents(sections, events) {
   for (const sec of sections) {
     const fromScore = (m) =>
       m.state === "completed" ? 2 * Math.max(...m.teams.map((t) => t.result?.gameWins ?? 0)) - 1 : 0;
     const fallback = Math.max(1, ...sec.matches.map(fromScore));
-    for (const m of sec.matches) m.bo = bestOf.get(m.id) || fromScore(m) || fallback;
+    for (const m of sec.matches) {
+      const e = events.get(m.id);
+      m.bo = e?.match.strategy?.count || fromScore(m) || fallback;
+      m.start = e?.startTime;
+    }
   }
 }
 
 // fases do torneio, já classificadas e com a estrutura dos chaveamentos
 async function loadStages(tour, list) {
-  const [data, bestOf] = await Promise.all([
+  const [data, events] = await Promise.all([
     api("getStandings", { tournamentId: tour.id }),
-    loadBestOf(tour.leagueId).catch(() => new Map()),
+    loadEvents(tour),
   ]);
   const stages = data.standings[0]?.stages || [];
   for (const stage of stages) {
     stage.kind = stageKind(stage);
-    annotateBestOf(stage.sections, bestOf);
+    annotateEvents(stage.sections, events);
     if (stage.kind !== "bracket") continue;
     for (const [i, sec] of stage.sections.entries()) {
       const open = sec.matches.some(hasTBD);
