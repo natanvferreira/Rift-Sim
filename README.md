@@ -12,6 +12,7 @@ dependências.
 ## Como usar
 
 - **Abas:** escolha a competição; no menu ao lado, o split ou a edição (o torneio em andamento abre por padrão).
+  A aba CBLOL inclui a LTA Sul (o CBLOL de 2025).
 - **Vencedor:** clique no time. Verde = resultado real, dourado = seu palpite. Clicar de novo no mesmo time desfaz.
 - **Placar:** em séries md3/md5, depois de clicar aparecem os placares possíveis (ex.: 3-0, 3-1, 3-2). O placar
   entra no saldo da tabela. Dá para mudar só o placar de um resultado real.
@@ -79,6 +80,8 @@ próprio lolesports.com; se a Riot trocá-la, o site para de carregar até ela s
 
 ## Limitações conhecidas
 
+- Só aparecem as edições que a API do lolesports tem (ex.: não há Mundial 2012–2013 nem 2017–2019, nem CBLOL
+  antes de 2020).
 - Desempate não considera confronto direto.
 - A 1ª rodada da suíça sempre vem do sorteio real (a API não informa os tiers dos times).
 - O time que passa pelo palpite herda a vaga (posição na tabela ou saída da chave) do time real na fase

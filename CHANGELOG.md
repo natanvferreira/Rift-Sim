@@ -12,6 +12,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
   idioma escolhido.
 - Botão "Compartilhar no X": abre um post com um link que carrega os seus palpites para quem abrir.
 - Circuito Desafiante (aba "Desafiante", link `#Desafiante`).
+- A aba CBLOL também traz os splits de 2025, quando o CBLOL virou a LTA Sul.
 
 ### Alterado
 
@@ -25,6 +26,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
   múltiplos da LCK e LPL) agora leva o time escolhido para a fase seguinte, no lugar do time real e sem herdar
   os resultados dele; enquanto a vaga não é decidida, aparece "A definir".
 - Trocar o `#liga` na URL ou usar o voltar do navegador agora troca a liga sem recarregar a página.
+- O menu de torneios mostrava só as 9 edições mais recentes; agora lista todas (ex.: CBLOL 2021).
 
 ## [1.0.0] - 2026-10-27
 

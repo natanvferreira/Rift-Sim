@@ -2,6 +2,7 @@
 
 const EN = {
   Mundial: "Worlds",
+  "LTA Sul": "LTA South",
   "A definir": "TBD",
   Time: "Team",
   "V-D": "W-L",

@@ -4,9 +4,9 @@ const $ = (s) => document.querySelector(s);
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const img = (t) => esc((t.image || "").replace(/^http:/, "https:"));
-// "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"; "circuito_desafiante_split_2_2026" -> "Desafiante Split 2 2026"
+// "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"; "circuito_desafiante_split_2_2026" -> "Desafiante Split 2 2026"; "lta_s_split_1_2025" -> "LTA Sul Split 1 2025"
 const tourName = (t) =>
-  `${tr(state.league)} ${t.slug.replace(/^(circuito_desafiante|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  `${t.slug.startsWith("lta_s_") ? tr("LTA Sul") : tr(state.league)} ${t.slug.replace(/^(lta_s|circuito_desafiante|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
 const store = {
   get: (k) => {
@@ -228,7 +228,6 @@ function render() {
     .map((k) => `<button class="${k === state.league ? "active" : ""}" data-league="${k}">${tr(k)}</button>`)
     .join("");
   $("#tour").innerHTML = (state.tours[state.league] || [])
-    .slice(0, 9)
     .map((t, i) => `<option value="${i}" ${t === state.tour ? "selected" : ""}>${esc(tourName(t))}</option>`)
     .join("");
   if (!state.stages) {
@@ -265,7 +264,7 @@ async function selectTour(tour, shared) {
   Object.assign(state, { tour, stages: null, lastPos: new Map() });
   render();
   try {
-    const stages = await loadStages(tour, state.tours[state.league], LEAGUES[state.league]);
+    const stages = await loadStages(tour, state.tours[state.league]);
     if (state.tour !== tour) return; // trocou de torneio enquanto carregava
     Object.assign(state, { stages, picks: shared || store.get(`picks:${tour.id}`) || {} });
     if (shared) savePicks();

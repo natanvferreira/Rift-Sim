@@ -4,7 +4,7 @@ const API_URL = "https://esports-api.lolesports.com/persisted/gw/";
 const API_KEY = "0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z"; // chave pública embutida no lolesports.com
 
 const LEAGUES = {
-  CBLOL: "98767991332355509",
+  CBLOL: ["98767991332355509", "113475181634818701"], // em 2025 o CBLOL virou a LTA Sul
   Desafiante: "105549980953490846",
   LCK: "98767991310872058",
   LPL: "98767991314006698",
@@ -22,12 +22,15 @@ async function api(path, params) {
   return (await res.json()).data;
 }
 
-// torneios da liga, mais novo primeiro
-async function loadTournaments(leagueId) {
-  const data = await api("getTournamentsForLeague", { leagueId });
-  return data.leagues[0].tournaments.sort((a, b) =>
-    b.startDate.localeCompare(a.startDate),
+// torneios da(s) liga(s), mais novo primeiro; cada um guarda o leagueId de onde veio
+async function loadTournaments(ids) {
+  const lists = await Promise.all(
+    [ids].flat().map(async (leagueId) => {
+      const data = await api("getTournamentsForLeague", { leagueId });
+      return data.leagues[0].tournaments.map((t) => ({ ...t, leagueId }));
+    }),
   );
+  return lists.flat().sort((a, b) => b.startDate.localeCompare(a.startDate));
 }
 
 // chaveamento ainda "a definir": copia a estrutura da mesma fase na edição anterior
@@ -66,10 +69,10 @@ function annotateBestOf(sections, bestOf) {
 }
 
 // fases do torneio, já classificadas e com a estrutura dos chaveamentos
-async function loadStages(tour, list, leagueId) {
+async function loadStages(tour, list) {
   const [data, bestOf] = await Promise.all([
     api("getStandings", { tournamentId: tour.id }),
-    loadBestOf(leagueId).catch(() => new Map()),
+    loadBestOf(tour.leagueId).catch(() => new Map()),
   ]);
   const stages = data.standings[0]?.stages || [];
   for (const stage of stages) {
