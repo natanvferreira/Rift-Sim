@@ -6,6 +6,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ### Adicionado
 
+- First Stand (2025 e 2026), o torneio internacional de março.
 - Logo do Rift Sim no topo da página, como favicon e no README.
 - Passar o mouse num time destaca todas as partidas dele (o caminho até onde chegou) e apaga as demais.
 - Seletor de idioma (PT / EN): começa pelo idioma do navegador e fica salvo; os nomes das fases vêm da API no
