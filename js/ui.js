@@ -5,8 +5,9 @@ const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const img = (t) => esc((t.image || "").replace(/^http:/, "https:"));
 // "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"; "circuito_desafiante_split_2_2026" -> "Desafiante Split 2 2026"; "lta_s_split_1_2025" -> "LTA Sul Split 1 2025"
+const LTA = { lta_s_: "LTA Sul", lta_n_: "LTA Norte" };
 const tourName = (t) =>
-  `${t.slug.startsWith("lta_s_") ? tr("LTA Sul") : tr(state.league)} ${t.slug.replace(/^(lta_s|circuito_desafiante|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  `${tr(LTA[t.slug.slice(0, 6)] || state.league)} ${t.slug.replace(/^(lta_[sn]|circuito_desafiante|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
 const store = {
   get: (k) => {
@@ -230,6 +231,8 @@ function render() {
   $("#tour").innerHTML = (state.tours[state.league] || [])
     .map((t, i) => `<option value="${i}" ${t === state.tour ? "selected" : ""}>${esc(tourName(t))}</option>`)
     .join("");
+  window.jQuery?.("#tour").trigger("change.select2"); // innerHTML não avisa o select2
+  $(".select2-selection")?.setAttribute("aria-label", tr("Torneio"));
   if (!state.stages) {
     $("#view").innerHTML = `<p class="muted">${tr("Carregando…")}</p>`;
     return;
@@ -293,9 +296,13 @@ $("#tabs").addEventListener("click", (e) => {
   if (b) selectLeague(b.dataset.league);
 });
 
-$("#tour").addEventListener("change", (e) =>
-  selectTour(state.tours[state.league][e.target.value]),
-);
+const onTour = (e) => selectTour(state.tours[state.league][e.target.value]);
+// select2 (menu com busca) dispara o change pelo jQuery, que não chega ao addEventListener; sem a CDN fica o select comum
+if (window.jQuery?.fn.select2)
+  jQuery("#tour")
+    .select2({ width: "auto", dropdownAutoWidth: true, language: { noResults: () => tr("Nenhum torneio encontrado") } })
+    .on("change", onTour);
+else $("#tour").addEventListener("change", onTour);
 
 // troca o idioma: os nomes das fases vêm traduzidos da API, então recarrega o torneio
 $("#lang").addEventListener("change", (e) => {

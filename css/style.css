@@ -58,6 +58,54 @@ select:focus-visible {
   color: var(--muted);
 }
 
+/* select2 (menu de torneios com busca) no tema escuro */
+.select2-container--default .select2-selection--single {
+  height: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 32px 8px 14px;
+}
+
+.select2-container--default .select2-selection--single:hover,
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: var(--gold);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--text);
+  padding: 0;
+  line-height: inherit;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100%;
+  right: 8px;
+}
+
+.select2-dropdown {
+  background: var(--panel);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+  font: inherit;
+  color: var(--text);
+  background: var(--card);
+  border-color: var(--line);
+  border-radius: 6px;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+.select2-container--default .select2-results__option--selected {
+  background: var(--card);
+}
+
 .err {
   color: var(--red);
 }
@@ -541,7 +589,8 @@ footer {
     width: 100%;
   }
 
-  .controls select {
+  .controls select,
+  .controls .select2-container {
     flex: 1;
     min-width: 0;
   }

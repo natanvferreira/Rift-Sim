@@ -12,7 +12,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
   idioma escolhido.
 - Botão "Compartilhar no X": abre um post com um link que carrega os seus palpites para quem abrir.
 - Circuito Desafiante (aba "Desafiante", link `#Desafiante`).
-- A aba CBLOL também traz os splits de 2025, quando o CBLOL virou a LTA Sul.
+- A aba CBLOL também traz os splits de 2025, quando o CBLOL virou a LTA Sul; a aba LCS, os da LTA Norte.
+- Busca no menu de torneios (Select2): digite parte do nome, ex. "2021" ou "summer".
 
 ### Alterado
 

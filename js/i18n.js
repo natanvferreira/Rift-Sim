@@ -3,6 +3,8 @@
 const EN = {
   Mundial: "Worlds",
   "LTA Sul": "LTA South",
+  "LTA Norte": "LTA North",
+  "Nenhum torneio encontrado": "No tournament found",
   "A definir": "TBD",
   Time: "Team",
   "V-D": "W-L",

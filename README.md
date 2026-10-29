@@ -6,13 +6,15 @@ Simulador de campeonatos de League of Legends com **dados reais**: CBLOL, Circui
 Você clica no time que vence, escolhe o placar da série e vê a tabela, a fase suíça e o chaveamento se
 recalcularem até o campeão.
 
-Site 100% estático: roda no GitHub Pages ou abrindo o `index.html` direto no navegador, sem build e sem
-dependências.
+Site 100% estático: roda no GitHub Pages ou abrindo o `index.html` direto no navegador, sem build. A única
+dependência é o [Select2](https://select2.org) (com jQuery) do menu de torneios, carregado do cdnjs; sem ele o
+menu vira um select comum.
 
 ## Como usar
 
 - **Abas:** escolha a competição; no menu ao lado, o split ou a edição (o torneio em andamento abre por padrão).
-  A aba CBLOL inclui a LTA Sul (o CBLOL de 2025).
+  A aba CBLOL inclui a LTA Sul (o CBLOL de 2025) e a LCS inclui a LTA Norte. Dá para digitar no menu para buscar
+  o torneio (ex.: "2021").
 - **Vencedor:** clique no time. Verde = resultado real, dourado = seu palpite. Clicar de novo no mesmo time desfaz.
 - **Placar:** em séries md3/md5, depois de clicar aparecem os placares possíveis (ex.: 3-0, 3-1, 3-2). O placar
   entra no saldo da tabela. Dá para mudar só o placar de um resultado real.
