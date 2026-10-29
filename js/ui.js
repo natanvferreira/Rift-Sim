@@ -32,6 +32,8 @@ const state = {
   picks: {},
   lastPos: new Map(), // posições da renderização anterior, para as setas ▲▼
   active: null, // partida clicada por último: mostra os botões de placar
+  live: new Map(), // partidas ao vivo agora (getLive)
+  fav: null, // time favorito da liga: caminho sempre marcado
 };
 
 // ---------- peças ----------
@@ -60,11 +62,25 @@ function scoresHTML(m) {
   return `<div class="scores"><span>${esc(m.winner.code)}</span>${chips.join("")}</div>`;
 }
 
-// "dom., 20/07, 17:00" no fuso de quem está vendo
-const whenHTML = (m) =>
-  m.start
+// transmissão no idioma da página, senão a primeira; sem nenhuma, a página ao vivo do lolesports
+function streamURL(e) {
+  const s = e.streams?.find((s) => s.locale === lang) || e.streams?.[0];
+  const p = encodeURIComponent(s?.parameter || "");
+  if (s?.provider === "twitch") return `https://www.twitch.tv/${p}`;
+  if (s?.provider === "youtube") return `https://www.youtube.com/watch?v=${p}`;
+  return `https://lolesports.com/live/${encodeURIComponent(e.league?.slug || "")}`;
+}
+
+// ao vivo: selo + link da transmissão; senão "dom., 20/07, 17:00" no fuso de quem está vendo
+function whenHTML(m) {
+  const live = state.live.get(m.id);
+  if (live) {
+    return `<div class="when live"><span>● ${tr("AO VIVO")}</span><a href="${esc(streamURL(live))}" target="_blank" rel="noopener">${tr("Assistir")} ↗</a></div>`;
+  }
+  return m.start
     ? `<time class="when" datetime="${esc(m.start)}">${new Date(m.start).toLocaleString(lang, { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</time>`
     : "";
+}
 
 function matchHTML(m) {
   const open = !isTBD(m.teams[0]) && !isTBD(m.teams[1]);
@@ -80,6 +96,11 @@ const col = (title, body, cls = "") =>
 const drawButton = (key, label) =>
   `<button class="redraw" data-draw="${key}">🎲 ${label}</button>`;
 
+const favHTML = (t) => {
+  const on = t.id === state.fav;
+  return `<button class="star${on ? " on" : ""}" data-fav="${esc(t.id)}" aria-pressed="${on}" aria-label="${esc(tr("Favoritar {0}", t.name))}">${on ? "★" : "☆"}</button>`;
+};
+
 function tableHTML(rows, key, rowClass = () => "") {
   const before = state.lastPos.get(key);
   state.lastPos.set(key, new Map(rows.map((r, i) => [r.team.id, i])));
@@ -94,7 +115,7 @@ function tableHTML(rows, key, rowClass = () => "") {
       .map(
         (r, i) => `<tr class="${rowClass(r)}">
       <td class="pos">${i + 1}${arrow(r.team.id, i)}</td>
-      <td><span class="name"><img class="logo" src="${img(r.team)}" alt="" loading="lazy">${esc(r.team.name)}</span></td>
+      <td><span class="name"><img class="logo" src="${img(r.team)}" alt="" loading="lazy">${esc(r.team.name)}${favHTML(r.team)}</span></td>
       <td>${r.w}-${r.l}</td><td>${r.gd > 0 ? "+" : ""}${r.gd}</td></tr>`,
       )
       .join("")}</tbody></table>`;
@@ -249,6 +270,12 @@ function render() {
     ? compute(state.stages, state.picks).map(stageHTML).join("")
     : `<p class="muted">${tr("Sem dados para este torneio ainda.")}</p>`;
   document.querySelectorAll(".bracket").forEach((el, i) => (el.scrollLeft = scrolls[i] ?? 0));
+  if (state.fav) {
+    for (const el of $("#view").querySelectorAll(`.team[data-t="${CSS.escape(state.fav)}"]`)) {
+      el.classList.add("fav");
+      el.closest(".match").classList.add("fav");
+    }
+  }
   showTrail($("#view").querySelector(".team[data-t]:hover")?.dataset.t);
   // rodada nova da suíça nasce na última coluna, possivelmente fora da tela: leva a faixa até o fim
   const rounds = document.querySelectorAll(".swiss-round");
@@ -262,6 +289,7 @@ function render() {
 
 async function selectLeague(league) {
   state.league = league;
+  state.fav = store.get(`fav:${league}`);
   history.replaceState(null, "", `${location.pathname}#${league}`); // link direto para a liga (e tira o ?tour=&picks= de um link compartilhado)
   const today = new Date().toISOString().slice(0, 10);
   const list = state.tours[league];
@@ -356,6 +384,12 @@ function parseShared(raw) {
 }
 
 $("#view").addEventListener("click", (e) => {
+  const fav = e.target.closest("[data-fav]");
+  if (fav) {
+    state.fav = fav.dataset.fav === state.fav ? null : fav.dataset.fav;
+    store.set(`fav:${state.league}`, state.fav);
+    return render();
+  }
   const draw = e.target.closest("[data-draw]");
   const team = e.target.closest("[data-m]");
   const { picks } = state;
@@ -389,6 +423,22 @@ $("#view").addEventListener("mouseover", (e) =>
 );
 $("#view").addEventListener("mouseleave", () => showTrail(null));
 
+// de minuto em minuto vê o que está ao vivo; quando muda (começou ou acabou um jogo), recarrega os resultados
+async function refreshLive() {
+  if (document.hidden) return;
+  const live = await loadLive().catch(() => null);
+  if (!live) return;
+  const changed = [...live.keys()].join() !== [...state.live.keys()].join();
+  state.live = live;
+  if (!changed || !state.stages) return;
+  const tour = state.tour;
+  const stages = await loadStages(tour, state.tours[state.league]).catch(() => null);
+  if (stages && state.tour === tour) state.stages = stages;
+  render();
+}
+setInterval(refreshLive, 60_000);
+document.addEventListener("visibilitychange", refreshLive);
+
 (async function init() {
   $("#lang").value = lang;
   translatePage();
@@ -404,13 +454,14 @@ $("#view").addEventListener("mouseleave", () => showTrail(null));
       // não apaga os palpites da pessoa sem perguntar
       const replace = !mine || !Object.keys(mine).length || JSON.stringify(mine) === JSON.stringify(shared) ||
         confirm(tr("Este link tem uma simulação compartilhada. Substituir seus palpites deste torneio por ela?"));
-      state.league = league;
+      Object.assign(state, { league, fav: store.get(`fav:${league}`) });
       history.replaceState(null, "", `${location.pathname}#${league}`);
       await selectTour(tour, replace ? shared : undefined);
-      return;
+    } else {
+      const fromHash = decodeURIComponent(location.hash.slice(1));
+      await selectLeague(LEAGUES[fromHash] ? fromHash : state.league);
     }
-    const fromHash = decodeURIComponent(location.hash.slice(1));
-    await selectLeague(LEAGUES[fromHash] ? fromHash : state.league);
+    refreshLive();
   } catch (e) {
     $("#view").innerHTML = `<p class="err">${esc(tr("Não consegui carregar os dados ({0}). Tente recarregar.", e.message))}</p>`;
   }

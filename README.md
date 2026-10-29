@@ -23,6 +23,9 @@ menu vira um select comum.
 - **Mata-mata do Mundial:** quando as quartas ainda não existem (ou você mudou a suíça), o chaveamento é sorteado
   pela regra oficial; 🎲 **Sortear chaveamento** refaz.
 - **Data do jogo:** aparece no topo de cada partida, no fuso do seu navegador.
+- **Ao vivo:** a partida que está acontecendo ganha o selo **AO VIVO** e um link **Assistir** (Twitch/YouTube).
+- **Time favorito:** clique na ☆ ao lado do time na tabela; o caminho dele fica sempre marcado. Um por liga,
+  salvo no navegador.
 - **Caminho do time:** passe o mouse num time para destacar todas as partidas dele, em todas as fases.
 - **Limpar palpites:** volta tudo ao resultado real. Os palpites ficam salvos no navegador, por torneio.
 - **Link direto:** `index.html#CBLOL`, `#Desafiante`, `#LCK`, `#LPL`, `#LCS`, `#MSI`, `#Mundial`.
@@ -78,7 +81,7 @@ completa sem revanches e sorteio das quartas. Requer Node 18+.
 ## Dados
 
 Vêm ao vivo da API pública do [lolesports.com](https://lolesports.com), a mesma usada pelo site oficial
-(`getTournamentsForLeague`, `getStandings`, `getSchedule`, `getCompletedEvents`). A chave em `js/api.js` é a pública embutida no
+(`getTournamentsForLeague`, `getStandings`, `getSchedule`, `getCompletedEvents`, `getLive`). A chave em `js/api.js` é a pública embutida no
 próprio lolesports.com; se a Riot trocá-la, o site para de carregar até ela ser atualizada.
 
 ## Limitações conhecidas

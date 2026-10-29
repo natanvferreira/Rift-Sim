@@ -60,6 +60,12 @@ async function loadEvents(tour) {
   );
 }
 
+// partidas acontecendo agora, de todas as ligas: idDaPartida -> evento (com as transmissões)
+async function loadLive() {
+  const data = await api("getLive");
+  return new Map((data.schedule.events || []).filter((e) => e.match).map((e) => [e.match.id, e]));
+}
+
 // md de cada partida: calendário; senão o placar real (2-1 -> md3); senão o maior md da seção
 function annotateEvents(sections, events) {
   for (const sec of sections) {

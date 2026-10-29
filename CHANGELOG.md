@@ -15,6 +15,9 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 - A aba CBLOL também traz os splits de 2025, quando o CBLOL virou a LTA Sul; a aba LCS, os da LTA Norte.
 - Busca no menu de torneios (Select2): digite parte do nome, ex. "2021" ou "summer".
 - Data e hora de cada partida (no fuso de quem está vendo), quando a API informa.
+- Jogo ao vivo: selo "AO VIVO" e link para a transmissão; a página confere a cada minuto e atualiza os
+  resultados quando um jogo começa ou termina.
+- Time favorito: a estrela ☆ na tabela fixa o time (um por liga) e deixa o caminho dele sempre marcado.
 
 ### Alterado
 
