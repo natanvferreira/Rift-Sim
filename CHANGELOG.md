@@ -39,6 +39,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 - Palpite no play-in, em chaveamentos intermediários ou em qualquer fase de pontos corridos (inclusive grupos
   múltiplos da LCK e LPL) agora leva o time escolhido para a fase seguinte, no lugar do time real e sem herdar
   os resultados dele; enquanto a vaga não é decidida, aparece "A definir".
+- Opções dos menus comuns (ex.: idioma) abriam em fundo branco com texto claro, difícil de ler.
 - Trocar o `#liga` na URL ou usar o voltar do navegador agora troca a liga sem recarregar a página.
 - O menu de torneios mostrava só as 9 edições mais recentes; agora lista todas (ex.: CBLOL 2021).
 - Topo no celular estourava a largura da tela: abas e botões agora quebram linha.

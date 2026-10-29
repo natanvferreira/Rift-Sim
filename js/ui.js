@@ -253,7 +253,6 @@ function render() {
   $("#tour").innerHTML = (state.tours[state.league] || [])
     .map((t, i) => `<option value="${i}" ${t === state.tour ? "selected" : ""}>${esc(tourName(t))}</option>`)
     .join("");
-  window.jQuery?.("#tour").trigger("change.select2"); // innerHTML não avisa o select2
   // times do torneio aberto, em qualquer formato (o MSI, por exemplo, não tem tabela)
   const teams = new Map();
   for (const m of (state.stages || []).flatMap((st) => st.sections.flatMap((s) => s.matches))) {
@@ -263,6 +262,7 @@ function render() {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((t) => `<option value="${esc(t.id)}" ${t.id === state.fav ? "selected" : ""}>${esc(t.name)}</option>`)
     .join("");
+  window.jQuery?.("#tour, #fav").trigger("change.select2"); // innerHTML não avisa o select2
   $("#tourbar").hidden = !state.stages?.length;
   if (!state.stages) {
     $("#view").innerHTML = `<p class="muted">${tr("Carregando…")}</p>`;
@@ -338,18 +338,26 @@ const onTour = (e) => {
   const tour = state.tours[state.league][e.target.value];
   if (tour !== state.tour) selectTour(tour); // o select2 dispara change até ao clicar no torneio já aberto
 };
+const onFav = (e) => {
+  state.fav = e.target.value || null;
+  store.set(`fav:${state.league}`, state.fav);
+  render();
+};
+
 // select2 (menu com busca) dispara o change pelo jQuery, que não chega ao addEventListener; sem a CDN fica o select comum
-if (window.jQuery?.fn.select2) {
-  jQuery("#tour")
-    .select2({
-      width: "auto",
-      dropdownAutoWidth: true,
-      language: { noResults: () => tr("Nenhum torneio encontrado"), search: () => tr("Buscar torneio") },
-    })
-    .on("change", onTour);
-  // o select2 nomeia a caixa só pelo torneio escolhido; junta o rótulo "Torneio" antes
-  $(".select2-selection").setAttribute("aria-labelledby", "tour-label select2-tour-container");
-} else $("#tour").addEventListener("change", onTour);
+function enhance(id, labelId, onChange, options) {
+  if (!window.jQuery?.fn.select2) return $(`#${id}`).addEventListener("change", onChange);
+  jQuery(`#${id}`).select2({ width: "auto", dropdownAutoWidth: true, ...options }).on("change", onChange);
+  // o select2 nomeia a caixa só pelo item escolhido; junta o rótulo antes
+  $(`#${id}`).nextElementSibling.querySelector(".select2-selection").setAttribute("aria-labelledby", `${labelId} select2-${id}-container`);
+}
+enhance("tour", "tour-label", onTour, {
+  language: { noResults: () => tr("Nenhum torneio encontrado"), search: () => tr("Buscar torneio") },
+});
+enhance("fav", "fav-label", onFav, {
+  language: { noResults: () => tr("Nenhum time encontrado"), search: () => tr("Buscar time") },
+  templateSelection: (o) => jQuery('<span><i class="fa-solid fa-star" aria-hidden="true"></i></span>').append(document.createTextNode(o.text)),
+});
 
 // troca o idioma: os nomes das fases vêm traduzidos da API, então recarrega o torneio
 $("#lang").addEventListener("change", (e) => {
@@ -358,12 +366,6 @@ $("#lang").addEventListener("change", (e) => {
   translatePage();
   if (state.tour) selectTour(state.tour);
   else render();
-});
-
-$("#fav").addEventListener("change", (e) => {
-  state.fav = e.target.value || null;
-  store.set(`fav:${state.league}`, state.fav);
-  render();
 });
 
 $("#reset").addEventListener("click", () => {

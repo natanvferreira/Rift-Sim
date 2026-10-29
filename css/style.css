@@ -59,9 +59,14 @@ select:focus-visible {
 }
 
 /* ícone + texto no mesmo botão */
-button > i + span,
-.fav-pick > i + select {
+button > i + span {
   margin-left: 8px;
+}
+
+/* opções dos menus comuns: sem isso o Windows abre a lista branca com o texto da página */
+select option {
+  background: var(--card);
+  color: var(--text);
 }
 
 /* ações do torneio aberto, logo acima das fases */
@@ -72,25 +77,14 @@ button > i + span,
   margin-top: 16px;
 }
 
-.fav-pick {
-  display: flex;
-  align-items: center;
-  padding-left: 12px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+/* o display: flex acima ganharia do [hidden] do navegador */
+.tourbar[hidden] {
+  display: none;
+}
+
+#select2-fav-container i {
+  margin-right: 8px;
   color: var(--gold);
-}
-
-.fav-pick:hover,
-.fav-pick:focus-within {
-  border-color: var(--gold);
-}
-
-.fav-pick select {
-  border: 0;
-  background: transparent;
-  padding-left: 0;
 }
 
 /* select2 (menu de torneios com busca) no tema escuro */
@@ -680,12 +674,8 @@ footer {
     display: none;
   }
 
-  .fav-pick {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .fav-pick select {
+  .tourbar .select2-container,
+  .tourbar #fav {
     flex: 1;
     min-width: 0;
   }

@@ -9,6 +9,8 @@ const EN = {
   "AO VIVO": "LIVE",
   Assistir: "Watch",
   "Sem favorito": "No favorite",
+  "Nenhum time encontrado": "No team found",
+  "Buscar time": "Search team",
   "Time favorito": "Favorite team",
   "A definir": "TBD",
   Time: "Team",
