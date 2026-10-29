@@ -2,7 +2,7 @@
 
 # Rift Sim
 
-Simulador de campeonatos de League of Legends com **dados reais**: CBLOL, Circuito Desafiante, LCK, LPL, LCS, First Stand, MSI e Mundial.
+Simulador de campeonatos de League of Legends com **dados reais**: CBLOL, Circuito Desafiante, LCK, LPL, LCS, First Stand, EWC (Esports World Cup), MSI e Mundial.
 Você clica no time que vence, escolhe o placar da série e vê a tabela, a fase suíça e o chaveamento se
 recalcularem até o campeão.
 
@@ -29,7 +29,7 @@ um select comum, o [html2canvas](https://html2canvas.hertzen.com) da imagem de c
   navegador.
 - **Caminho do time:** passe o mouse num time para destacar todas as partidas dele, em todas as fases.
 - **Limpar palpites:** volta tudo ao resultado real. Os palpites ficam salvos no navegador, por torneio.
-- **Link direto:** `index.html#CBLOL`, `#Desafiante`, `#LCK`, `#LPL`, `#LCS`, `#First%20Stand`, `#MSI`, `#Mundial`.
+- **Link direto:** `index.html#CBLOL`, `#Desafiante`, `#LCK`, `#LPL`, `#LCS`, `#First%20Stand`, `#EWC`, `#MSI`, `#Mundial`.
 
 ## Regras simuladas
 

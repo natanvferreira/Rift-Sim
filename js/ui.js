@@ -7,7 +7,7 @@ const img = (t) => esc((t.image || "").replace(/^http:/, "https:"));
 // "cblol_split_3_2026" -> "CBLOL Split 3 2026"; "worlds_2026" -> "Mundial 2026"; "circuito_desafiante_split_2_2026" -> "Desafiante Split 2 2026"; "lta_s_split_1_2025" -> "LTA Sul Split 1 2025"
 const LTA = { lta_s_: "LTA Sul", lta_n_: "LTA Norte" };
 const tourName = (t) =>
-  `${tr(LTA[t.slug.slice(0, 6)] || state.league)} ${t.slug.replace(/^(lta_[sn]|circuito_desafiante|first_stand|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  `${tr(LTA[t.slug.slice(0, 6)] || state.league)} ${t.slug.replace(/^(lta_[sn]|circuito_desafiante|first_stand|ewc_lol|[^_]+)_/, "").replaceAll("_", " ")}`.replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
 const store = {
   get: (k) => {
