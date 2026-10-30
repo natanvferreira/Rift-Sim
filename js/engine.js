@@ -299,6 +299,24 @@ function computeBracket(st, picks, prev) {
   return { sections, drawn, ...status(sections.flatMap((s) => s.matches)) };
 }
 
+// disputa de 3º lugar (ex.: EWC): a última partida junta dois perdedores, logo depois da final
+const isThirdPlace = (sec) => sec.matches.length > 2 && sec.links.at(-1).every((s) => s && !s.won);
+
+// eliminados da chave, do primeiro ao último a cair: perdedor cuja derrota não leva a outra partida.
+// jogo "a definir" de origem desconhecida mais adiante pode ser a chave inferior: espera ele ter origem
+function eliminated(sec) {
+  const { matches, links } = sec;
+  const order = matches.map((_, i) => i);
+  // a disputa de 3º é a última da lista, mas o 4º lugar cai antes do vice
+  if (isThirdPlace(sec)) order.splice(-2, 2, order.at(-1), order.at(-2));
+  return order.flatMap((i) => {
+    const m = matches[i];
+    const goesOn = links.some((l) => l.some((s) => s?.from === i && !s.won));
+    const unknown = matches.some((n, j) => j > i && links[j].some((s, k) => !s && isTBD(n.teams[k])));
+    return m.winner && !goesOn && !unknown ? [loserOf(m)] : [];
+  });
+}
+
 // ---------- torneio inteiro ----------
 
 // fase com palpites: o time real de cada vaga (posição na tabela, ou saída de um chaveamento que não
@@ -355,6 +373,6 @@ function compute(stages, picks) {
 
 if (typeof module === "object") {
   module.exports = {
-    seededRandom, stageKind, resolve, inferLinks, drawKnockout, compute, pairKey, loserOf,
+    seededRandom, stageKind, resolve, inferLinks, drawKnockout, compute, pairKey, loserOf, eliminated,
   };
 }

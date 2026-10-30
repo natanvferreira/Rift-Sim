@@ -515,6 +515,45 @@ span.logo {
   align-items: center;
 }
 
+/* classificados / eliminados */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.strip-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.strip-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.strip.in .strip-team {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.strip.out .strip-team {
+  background: var(--red-soft);
+  color: var(--muted);
+}
+
+.swiss .strip {
+  margin-top: 0;
+}
+
 .double .rows {
   display: flex;
   flex-direction: column;

@@ -116,6 +116,14 @@ function tableHTML(rows, key, rowClass = () => "") {
       .join("")}</tbody></table>`;
 }
 
+// faixa de logos: classificados / eliminados
+const teamsStripHTML = (title, teams, cls) =>
+  teams.length
+    ? `<div class="strip ${cls}"><span class="strip-title">${esc(title)}</span>${teams
+        .map((t) => `<span class="strip-team" title="${esc(t.name)}"><img class="logo" src="${img(t)}" alt="" loading="lazy">${esc(t.code)}</span>`)
+        .join("")}</div>`
+    : "";
+
 // ---------- chaveamentos ----------
 
 // troféu só na última fase com final; nas anteriores o vencedor apenas se classifica
@@ -189,8 +197,6 @@ function depthColumnsHTML(sec) {
     .join("")}</div>`;
 }
 
-// disputa de 3º lugar (ex.: EWC): a última partida junta dois perdedores, logo depois da final
-const isThirdPlace = (sec) => sec.matches.length > 2 && sec.links.at(-1).every((s) => s && !s.won);
 const withoutThird = (sec) =>
   isThirdPlace(sec) ? { ...sec, matches: sec.matches.slice(0, -1), links: sec.links.slice(0, -1) } : sec;
 
@@ -202,13 +208,14 @@ const hasFinal = (sec) => {
 
 function bracketHTML(sec, isChampionStage) {
   if (!sec.matches.length) return `<p class="muted">${tr("Ainda sem jogos.")}</p>`;
-  if (!hasFinal(sec)) return depthColumnsHTML(sec);
+  const out = teamsStripHTML(tr("Eliminados"), eliminated(sec), "out");
+  if (!hasFinal(sec)) return depthColumnsHTML(sec) + out;
   const third = isThirdPlace(sec)
     ? `<div class="bracket cols">${col(tr("Disputa de 3º lugar"), matchHTML(sec.matches.at(-1)))}</div>`
     : "";
   const main = withoutThird(sec);
   const hasLowerBracket = main.links.some((l) => l.some((s) => s && !s.won));
-  return (hasLowerBracket ? doubleElimHTML(main, isChampionStage) : treeHTML(main, isChampionStage)) + third;
+  return (hasLowerBracket ? doubleElimHTML(main, isChampionStage) : treeHTML(main, isChampionStage)) + third + out;
 }
 
 // ---------- fases ----------
@@ -239,7 +246,10 @@ function swissHTML(out, si) {
     return col(tr("Rodada {0}", i + 1) + (simulated ? ` · ${tr("simulada")}` : ""), body, "swiss-round");
   });
   const table = out.table.length ? tableHTML(out.table, `${si}`, rowClass) : "";
-  return `<div class="swiss">${table}<div class="bracket cols">${rounds.join("")}</div></div>`;
+  const strips =
+    teamsStripHTML(tr("Classificados"), out.qualifiers.map((r) => r.team), "in") +
+    teamsStripHTML(tr("Eliminados"), out.table.filter((r) => r.l === 3).map((r) => r.team).reverse(), "out"); // 0-3 caiu antes do 2-3
+  return `<div class="swiss">${table}${strips}<div class="bracket cols">${rounds.join("")}</div></div>`;
 }
 
 function stageHTML(out, si, all) {

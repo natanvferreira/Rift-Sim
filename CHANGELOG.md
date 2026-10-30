@@ -6,6 +6,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ### Adicionado
 
+- Times eliminados abaixo de cada mata-mata e, na fase suíça, classificados e eliminados, do primeiro ao último.
 - First Stand (2025 e 2026), o torneio internacional de março.
 - EWC (Esports World Cup 2026): fase de grupos e eliminatórias.
 - Disputa de 3º lugar aparece separada da chave, e a final volta a mostrar o troféu do campeão.

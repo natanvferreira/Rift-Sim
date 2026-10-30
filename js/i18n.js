@@ -17,6 +17,8 @@ const EN = {
   "V-D": "W-L",
   Saldo: "Diff",
   "Classificado:": "Qualified:",
+  Classificados: "Qualified",
+  Eliminados: "Eliminated",
   Final: "Final",
   Semifinal: "Semifinal",
   "Quartas de final": "Quarterfinal",

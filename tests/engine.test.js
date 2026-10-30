@@ -53,6 +53,30 @@ test("estrutura do chaveamento é deduzida dos jogos reais", () => {
   assert.deepEqual(links[2], [{ from: 0, won: true }, { from: 1, won: true }]);
 });
 
+test("eliminados: do primeiro ao último a cair, sem quem ainda joga a chave inferior", () => {
+  const t = [1, 2, 3, 4].map(team);
+  // partida já calculada, como sai do compute
+  const out = (ms) => ({ matches: ms.map((m) => ({ ...m, winner: m.teams.find((x) => x.result?.outcome === "win") })), links: E.inferLinks(ms) });
+  // chave dupla de 4: superior (a, b), final superior (c), inferior (d), final inferior (lf), grande final (gf)
+  const matches = [
+    played("a", t[0], t[1]),
+    played("b", t[2], t[3]),
+    played("c", t[0], t[2]),
+    played("d", t[1], t[3]),
+    played("lf", t[1], t[2]),
+    played("gf", t[0], t[1]),
+  ];
+  assert.deepEqual(E.eliminated(out(matches)).map((x) => x.id), ["t4", "t3", "t2"]);
+
+  // inferior ainda "a definir" sem origem conhecida: quem perdeu na superior não está fora
+  const open = [matches[0], matches[1], { id: "d", teams: [TBD, TBD] }];
+  assert.deepEqual(E.eliminated(out(open)), []);
+
+  // disputa de 3º (EWC): o 4º lugar cai antes do vice
+  const ewc = [played("a", t[0], t[1]), played("b", t[2], t[3]), played("f", t[0], t[2]), played("3", t[1], t[3])];
+  assert.deepEqual(E.eliminated(out(ewc)).map((x) => x.id), ["t4", "t3"]);
+});
+
 test("fase suíça completa: 5 rodadas, sem revanche, sempre mesmo recorde, 8 classificados", () => {
   const teams = Array.from({ length: 16 }, (_, i) => team(i));
   const round1 = Array.from({ length: 8 }, (_, i) => played(`r1-${i}`, teams[i], teams[15 - i]));
