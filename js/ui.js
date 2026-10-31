@@ -127,9 +127,18 @@ const teamsStripHTML = (title, teams, cls) =>
 // ---------- chaveamentos ----------
 
 // troféu só na última fase com final; nas anteriores o vencedor apenas se classifica
+// easter eggs do campeão do Mundial 2026, pelo código do time
+const WORLDS_2026_MSG = {
+  T1: "Parabens veiaco pelo heptacampeonato",
+  GEN: "Finalmente ano do Chovy",
+  HLE: "Começou a era Gumayusi",
+  LOS: "Sonha brasileirinho",
+};
+
 function finalHTML(m, title, isChampionStage) {
+  const msg = isChampionStage && state.tour?.slug === "worlds_2026" && WORLDS_2026_MSG[m.winner?.code];
   const champ = m.winner
-    ? `<div class="champ"><img class="logo" src="${img(m.winner)}" alt=""><span>${isChampionStage ? '<i class="fa-solid fa-trophy" aria-hidden="true"></i>' : tr("Classificado:")} ${esc(m.winner.name)}</span></div>`
+    ? `<div class="champ"><img class="logo" src="${img(m.winner)}" alt=""><span>${isChampionStage ? '<i class="fa-solid fa-trophy" aria-hidden="true"></i>' : tr("Classificado:")} ${esc(m.winner.name)}</span>${msg ? `<span class="egg" data-code="${esc(m.winner.code)}">${msg}</span>` : ""}</div>`
     : "";
   return col(title, matchHTML(m) + champ, "final");
 }
@@ -482,8 +491,40 @@ $("#view").addEventListener("click", (e) => {
     else if (picks[m]?.split(" ")[0] === t) delete picks[m];
     else picks[m] = t;
   } else return;
+  const eggBefore = $("#view .egg")?.textContent;
   savePicks();
+  const egg = $("#view .egg");
+  if (egg && egg.textContent !== eggBefore) celebrate(egg);
 });
+
+// shortcut: sem audio/brasil.mp3 no projeto, a voz do navegador grita no lugar; basta colocar o arquivo
+function brasil() {
+  new Audio("audio/brasil.mp3").play().catch(() => {
+    const u = new SpeechSynthesisUtterance("Brasil, sil, sil, sil!");
+    u.lang = "pt-BR";
+    u.rate = 1.3;
+    speechSynthesis.speak(u);
+  });
+}
+
+// popup com fogos quando o palpite faz sair um campeão com easter egg
+function celebrate(egg) {
+  const box = $("#celebrate");
+  box.querySelector("img").src = egg.parentElement.querySelector("img").src;
+  box.querySelector("p").textContent = egg.textContent;
+  const br = egg.dataset.code === "LOS";
+  box.querySelector(".flag").hidden = !br;
+  if (br) brasil();
+  box.showModal();
+  if (!window.confetti) return; // sem a CDN fica só o popup
+  // canvas dentro do dialog: o modal fica na camada de cima e cobriria o canvas padrão da lib
+  const fire = (celebrate.fire ??= confetti.create(box.querySelector("canvas"), { resize: true }));
+  const end = Date.now() + 2500;
+  (function burst() {
+    fire({ particleCount: 60, spread: 360, startVelocity: 30, origin: { x: Math.random(), y: Math.random() * 0.5 }, colors: br ? ["#009c3b", "#ffdf00", "#002776"] : ["#c8aa6e", "#ffffff", "#5fd38d"] });
+    if (Date.now() < end && box.open) setTimeout(burst, 300);
+  })();
+}
 
 // mouse em cima de um time destaca todas as partidas dele (o caminho até onde chegou)
 function showTrail(id) {

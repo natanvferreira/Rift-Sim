@@ -17,6 +17,7 @@ const EN = {
   "V-D": "W-L",
   Saldo: "Diff",
   "Classificado:": "Qualified:",
+  "Campeão!": "Champion!",
   Classificados: "Qualified",
   Eliminados: "Eliminated",
   Final: "Final",

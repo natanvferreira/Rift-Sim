@@ -37,6 +37,21 @@
         <button id="reset"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i><span data-i18n>Limpar palpites</span></button>
       </div>
       <div id="view"></div>
+      <dialog id="celebrate" class="celebrate">
+        <canvas></canvas>
+        <form method="dialog">
+          <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+          <img class="logo" src="" alt="" />
+          <svg class="flag" viewBox="0 0 20 14" role="img" aria-label="Bandeira do Brasil" hidden>
+            <rect width="20" height="14" fill="#009c3b" />
+            <path d="M10 1.5 18.5 7 10 12.5 1.5 7z" fill="#ffdf00" />
+            <circle cx="10" cy="7" r="3.2" fill="#002776" />
+          </svg>
+          <h2 data-i18n>Campeão!</h2>
+          <p></p>
+          <button autofocus>OK</button>
+        </form>
+      </dialog>
       <footer class="muted" data-i18n>
         Dados ao vivo da API do lolesports.com. Projeto de fã, sem ligação com a Riot Games.
       </footer>
@@ -44,6 +59,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js" integrity="sha512-4MvcHwcbqXKUHB6Lx3Zb5CEAVoE9u84qN+ZSMM6s7z8IeJriExrV3ND5zRze9mxNlABJ6k864P/Vl8m0Sd3DtQ==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.js" integrity="sha512-x3E9Zf5krE1VB4jXjd1xa7ehxJ5JdWLqg1gxhFVNWK7HphKYKDdIy2t/El3qiDUxgu36zNmWFOyjajFkPecGGg==" crossorigin="anonymous"></script>
     <script src="js/i18n.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/api.js"></script>
