@@ -126,7 +126,6 @@ const teamsStripHTML = (title, teams, cls) =>
 
 // ---------- chaveamentos ----------
 
-// troféu só na última fase com final; nas anteriores o vencedor apenas se classifica
 // easter eggs do campeão do Mundial 2026, pelo código do time
 const WORLDS_2026_MSG = {
   T1: "Parabens veiaco pelo heptacampeonato",
@@ -135,6 +134,7 @@ const WORLDS_2026_MSG = {
   LOS: "Sonha brasileirinho",
 };
 
+// troféu só na última fase com final; nas anteriores o vencedor apenas se classifica
 function finalHTML(m, title, isChampionStage) {
   const msg = isChampionStage && state.tour?.slug === "worlds_2026" && WORLDS_2026_MSG[m.winner?.code];
   const champ = m.winner
@@ -497,16 +497,6 @@ $("#view").addEventListener("click", (e) => {
   if (egg && egg.textContent !== eggBefore) celebrate(egg);
 });
 
-// shortcut: sem audio/brasil.mp3 no projeto, a voz do navegador grita no lugar; basta colocar o arquivo
-function brasil() {
-  new Audio("audio/brasil.mp3").play().catch(() => {
-    const u = new SpeechSynthesisUtterance("Brasil, sil, sil, sil!");
-    u.lang = "pt-BR";
-    u.rate = 1.3;
-    speechSynthesis.speak(u);
-  });
-}
-
 // popup com fogos quando o palpite faz sair um campeão com easter egg
 function celebrate(egg) {
   const box = $("#celebrate");
@@ -514,15 +504,16 @@ function celebrate(egg) {
   box.querySelector("p").textContent = egg.textContent;
   const br = egg.dataset.code === "LOS";
   box.querySelector(".flag").hidden = !br;
-  if (br) brasil();
+  if (br) new Audio("audio/brasil.mp3").play().catch(() => {}); // sem som se o navegador bloquear
   box.showModal();
   if (!window.confetti) return; // sem a CDN fica só o popup
   // canvas dentro do dialog: o modal fica na camada de cima e cobriria o canvas padrão da lib
   const fire = (celebrate.fire ??= confetti.create(box.querySelector("canvas"), { resize: true }));
   const end = Date.now() + 2500;
+  clearTimeout(celebrate.timer); // reabrir rápido não deixa o ciclo anterior rodando junto
   (function burst() {
     fire({ particleCount: 60, spread: 360, startVelocity: 30, origin: { x: Math.random(), y: Math.random() * 0.5 }, colors: br ? ["#009c3b", "#ffdf00", "#002776"] : ["#c8aa6e", "#ffffff", "#5fd38d"] });
-    if (Date.now() < end && box.open) setTimeout(burst, 300);
+    if (Date.now() < end && box.open) celebrate.timer = setTimeout(burst, 300);
   })();
 }
 
